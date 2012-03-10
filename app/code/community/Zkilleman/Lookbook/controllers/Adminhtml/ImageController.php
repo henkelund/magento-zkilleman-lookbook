@@ -35,4 +35,118 @@ class Zkilleman_Lookbook_Adminhtml_ImageController
         $this->loadLayout();
         $this->renderLayout();
     }
+    
+    public function newAction()
+    {
+        $this->_forward('edit');
+    }
+    
+    public function editAction()
+    {
+        $id = $this->getRequest()->getParam('image_id');
+        $model = Mage::getModel('lookbook/image');
+
+        if ($id) {
+            $model->load($id);
+            if (!$model->getId()) {
+                Mage::getSingleton('adminhtml/session')->addError(
+                        $this->__('This image no longer exists.'));
+                $this->_redirect('*/*/');
+                return;
+            }
+        }
+
+        $this->_title($model->getId() ? $model->getTitle() : $this->__('New Image'));
+
+        $data = Mage::getSingleton('adminhtml/session')->getFormData(true);
+        if (!empty($data)) {
+            $model->setData($data);
+        }
+
+        Mage::register('lookbook_image', $model);
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+    
+    public function saveAction()
+    {
+        if ($data = $this->getRequest()->getPost()) {
+
+            $helper = Mage::helper('lookbook');
+
+            $id = $this->getRequest()->getParam('image_id');
+            $model = Mage::getModel('lookbook/image')->load($id);
+            if (!$model->getId() && $id) {
+                Mage::getSingleton('adminhtml/session')->addError(
+                        $this->__('This image no longer exists.'));
+                $this->_redirect('*/*/');
+                return;
+            }
+
+            if (isset($data['file']['delete'])) {
+                $helper->removeImageFile($model);
+                $data['file'] = '';
+            } elseif (!empty($_FILES['file']['name'])) {
+                $helper->removeImageFile($model);
+                $uploader = new Mage_Core_Model_File_Uploader('file');
+                $uploader->setAllowedExtensions(array('jpg','jpeg','gif','png'));
+                $uploader->setAllowRenameFiles(true);
+                $uploader->setFilesDispersion(true);
+                $result = $uploader->save($helper->getMediaBaseDir());
+                $data['file'] = $result['file'];
+            } else {
+                unset($data['file']);
+            }
+            
+            $model->setData($data);
+
+            try {
+                $model->save();
+                Mage::getSingleton('adminhtml/session')->addSuccess(
+                        $this->__('The image has been saved.'));
+                Mage::getSingleton('adminhtml/session')->setFormData(false);
+
+                if ($this->getRequest()->getParam('back')) {
+                    $this->_redirect('*/*/edit', array('image_id' => $model->getId()));
+                    return;
+                }
+                $this->_redirect('*/*/');
+                return;
+
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+                Mage::getSingleton('adminhtml/session')->setFormData($data);
+                $this->_redirect('*/*/edit', array(
+                    'image_id' => $this->getRequest()->getParam('image_id')));
+                return;
+            }
+        }
+        $this->_redirect('*/*/');
+    }
+    
+    public function deleteAction()
+    {
+        if ($id = $this->getRequest()->getParam('image_id')) {
+            try {
+                $model = Mage::getModel('lookbook/image');
+                $model->load($id);
+                Mage::helper('lookbook')->removeImageFile($model);
+                $title = $model->getTitle();
+                $model->delete();
+
+                Mage::getSingleton('adminhtml/session')->addSuccess(
+                        $this->__(sprintf(
+                                'The image \'%s\' has been deleted.', $title)));
+                $this->_redirect('*/*/');
+                return;
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+                $this->_redirect('*/*/edit', array('image_id' => $id));
+                return;
+            }
+        }
+        Mage::getSingleton('adminhtml/session')->addError(
+                $this->__('Unable to find an image to delete.'));
+        $this->_redirect('*/*/');
+    }
 }

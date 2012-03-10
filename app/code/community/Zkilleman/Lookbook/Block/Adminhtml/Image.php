@@ -34,6 +34,8 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image
     {
         $this->_blockGroup = 'lookbook';
         $this->_controller = 'adminhtml_image';
+        $this->_headerText = $this->__('Lookbook Images');
+        $this->_addButtonLabel = $this->__('Add New Image');
         parent::__construct();
     }
 }

@@ -27,30 +27,16 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 
-class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
+class Zkilleman_Lookbook_Block_Adminhtml_Image_Helper_Image
+        extends Varien_Data_Form_Element_Image
 {
-    const STORAGE_PATH = 'lookbook';
     
-    public function getMediaBaseDir()
+    protected function _getUrl()
     {
-        return Mage::getBaseDir('media') . DS . self::STORAGE_PATH;
-    }
-    
-    public function getMediaBaseUrl()
-    {
-        return Mage::getBaseUrl('media') . DS . self::STORAGE_PATH;
-    }
-    
-    public function removeImageFile(Zkilleman_Lookbook_Model_Image $image)
-    {
-        if (!$image || !$image->getId() || $image->getFile() == '') {
-            return false;
+        $url = false;
+        if ($this->getValue()) {
+            $url = Mage::helper('lookbook')->getMediaBaseUrl() . $this->getValue();
         }
-        $file = $this->getMediaBaseDir() . $image->getFile();
-        if (file_exists($file) && unlink($file)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $url;
     }
 }

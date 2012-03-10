@@ -27,30 +27,36 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 
-class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
+class Zkilleman_Lookbook_Block_Adminhtml_Image_Edit
+        extends Mage_Adminhtml_Block_Widget_Form_Container
 {
-    const STORAGE_PATH = 'lookbook';
-    
-    public function getMediaBaseDir()
+    public function __construct()
     {
-        return Mage::getBaseDir('media') . DS . self::STORAGE_PATH;
+        $this->_objectId = 'image_id';
+        $this->_blockGroup = 'lookbook';
+        $this->_controller = 'adminhtml_image';
+
+        parent::__construct();
+
+        $this->_updateButton('save', 'label', Mage::helper('lookbook')->__('Save Image'));
+        $this->_updateButton('delete', 'label', Mage::helper('lookbook')->__('Delete Image'));
+
+        $this->_addButton('saveandcontinue', array(
+            'label'     => Mage::helper('adminhtml')->__('Save and Continue Edit'),
+            'onclick'   => 'editForm.submit($(\'edit_form\').action+\'back/edit/\');',
+            'class'     => 'save',
+        ), -100);
     }
     
-    public function getMediaBaseUrl()
+    public function getHeaderText()
     {
-        return Mage::getBaseUrl('media') . DS . self::STORAGE_PATH;
-    }
-    
-    public function removeImageFile(Zkilleman_Lookbook_Model_Image $image)
-    {
-        if (!$image || !$image->getId() || $image->getFile() == '') {
-            return false;
+        if (Mage::registry('lookbook_image')->getId()) {
+            return $this->__(
+                    'Edit Image \'%s\'',
+                    $this->htmlEscape(Mage::registry('lookbook_image')->getTitle()));
         }
-        $file = $this->getMediaBaseDir() . $image->getFile();
-        if (file_exists($file) && unlink($file)) {
-            return true;
-        } else {
-            return false;
+        else {
+            return $this->__('New Image');
         }
     }
 }

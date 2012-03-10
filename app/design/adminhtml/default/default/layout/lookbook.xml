@@ -34,4 +34,18 @@
             <block type="lookbook/adminhtml_image" name="lookbook.image"></block>
         </reference>
     </lookbook_adminhtml_image_index>
+
+    <lookbook_adminhtml_image_new>
+        <update handle="lookbook_adminhtml_image_edit" />
+    </lookbook_adminhtml_image_new>
+    
+    <lookbook_adminhtml_image_edit>
+        <update handle="editor"/>
+        <reference name="head">
+            <action method="addCss"><stylesheet>lookbook/tags.css</stylesheet></action>
+        </reference>
+        <reference name="content">
+            <block type="lookbook/adminhtml_image_edit" name="lookbook.image.edit"></block>
+        </reference>
+    </lookbook_adminhtml_image_edit>
 </layout>
