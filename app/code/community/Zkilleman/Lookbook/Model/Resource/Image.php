@@ -41,6 +41,11 @@ class Zkilleman_Lookbook_Model_Resource_Image
             $object->setCreatedAt(Mage::getSingleton('core/date')->gmtDate());
         }
         $object->setUpdatedAt(Mage::getSingleton('core/date')->gmtDate());
+        
+        if ($image = $object->createImageObject()) {
+            $object->setRatio(
+                    $image->getOriginalHeight()/$image->getOriginalWidth());
+        }
         return $this;
     }
 }

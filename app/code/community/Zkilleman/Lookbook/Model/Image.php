@@ -29,8 +29,33 @@
 
 class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
 {
+    /**
+     *
+     * @var Zkilleman_Lookbook_Helper_Data 
+     */
+    protected $_helper;
+    
     protected function _construct()
     {
+        $this->_helper = Mage::helper('lookbook');
         $this->_init('lookbook/image');
+    }
+    
+    /**
+     *
+     * @return mixed Varien_Image|null 
+     */
+    public function createImageObject()
+    {
+        $image = null;
+        if ($this->getFile() != '') {
+            try {
+                $image = new Varien_Image(
+                    $this->_helper->getMediaBaseDir() . DS . $this->getFile());
+            } catch (Exception $e) {
+                $image = null;
+            }
+        }
+        return $image;
     }
 }

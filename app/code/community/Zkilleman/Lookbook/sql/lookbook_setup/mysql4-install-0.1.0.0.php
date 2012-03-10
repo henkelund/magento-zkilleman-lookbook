@@ -53,7 +53,7 @@ $table = $installer->getConnection()
         'nullable'  => false,
         'default'   => '',
         ), 'Title')
-    ->addColumn('ratio', Varien_Db_Ddl_Table::TYPE_DECIMAL, '5,4', array(
+    ->addColumn('ratio', Varien_Db_Ddl_Table::TYPE_DECIMAL, '12,4', array(
         'nullable'  => false,
         'default'   => '0.0000',
         ), 'Ratio')
