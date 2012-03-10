@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Zkilleman_Lookbook
+ *
+ * Copyright (C) 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Lookbook.
+ *
+ * Zkilleman_Lookbook is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Lookbook is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Zkilleman_Lookbook. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @category Zkilleman
+ * @package Zkilleman_Lookbook
+ * @author Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license http://www.gnu.org/licenses/gpl.html GNU GPL
+ * @link https://github.com/henkelund/magento-zkilleman-lookbook
+ */
+-->
+<config>
+    <modules>
+        <Zkilleman_Lookbook>
+            <version>0.1.0.0</version>
+        </Zkilleman_Lookbook>
+    </modules>
+
+    <admin>
+        <routers>
+            <lookbook>
+                <use>admin</use>
+                <args>
+                    <module>Zkilleman_Lookbook</module>
+                    <frontName>lookbook</frontName>
+                </args>
+            </lookbook>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <lookbook>
+                    <file>lookbook.xml</file>
+                </lookbook>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <global>
+        <blocks>
+            <lookbook>
+                <class>Zkilleman_Lookbook_Block</class>
+            </lookbook>
+        </blocks>
+        <helpers>
+            <lookbook>
+                <class>Zkilleman_Lookbook_Helper</class>
+            </lookbook>
+        </helpers>
+        <models>
+            <lookbook>
+                <class>Zkilleman_Lookbook_Model</class>
+                <resourceModel>lookbook_resource</resourceModel>
+            </lookbook>
+            <lookbook_resource>
+                <class>Zkilleman_Lookbook_Model_Resource</class>
+                <entities>
+                    <image>
+                        <table>lookbook_image</table>
+                    </image>
+                </entities>
+            </lookbook_resource>
+        </models>
+        <resources>
+            <lookbook_setup>
+                <setup>
+                    <module>Zkilleman_Lookbook</module>
+                </setup>
+            </lookbook_setup>
+        </resources>
+    </global>
+</config>

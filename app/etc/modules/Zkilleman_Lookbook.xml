@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <Zkilleman_Lookbook>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Zkilleman_Lookbook>
+    </modules>
+</config>
