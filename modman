@@ -2,3 +2,4 @@ app/etc/modules/*                                      app/etc/modules/
 app/code/community/Zkilleman/Lookbook                  app/code/community/Zkilleman/Lookbook
 app/design/adminhtml/default/default/layout/*          app/design/adminhtml/default/default/layout/
 app/design/adminhtml/default/default/template/lookbook app/design/adminhtml/default/default/template/lookbook
+skin/adminhtml/default/default/lookbook                skin/adminhtml/default/default/lookbook

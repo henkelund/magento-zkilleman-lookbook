@@ -89,7 +89,14 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Edit_Form extends Mage_Adminhtml_
             )
         ));
         
-        $form->setValues($model->getData());
+        $data = $model->getData();
+        $data['file'] = array(
+            'value'   => isset($data['file']) ? $data['file'] : null,
+            'focus_x' => $model->getFocusX(),
+            'focus_y' => $model->getFocusY()
+        );
+        
+        $form->setValues($data);
         $form->setUseContainer(true);
         $this->setForm($form);
 

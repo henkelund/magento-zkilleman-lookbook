@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Zkilleman_Lookbook
  *
@@ -27,26 +26,21 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
--->
-<layout>
-    <lookbook_adminhtml_image_index>
-        <reference name="content">
-            <block type="lookbook/adminhtml_image" name="lookbook.image"></block>
-        </reference>
-    </lookbook_adminhtml_image_index>
-
-    <lookbook_adminhtml_image_new>
-        <update handle="lookbook_adminhtml_image_edit" />
-    </lookbook_adminhtml_image_new>
-    
-    <lookbook_adminhtml_image_edit>
-        <update handle="editor"/>
-        <reference name="head">
-            <action method="addCss"><stylesheet>lookbook/lookbook.css</stylesheet></action>
-            <action method="addItem"><type>skin_js</type><name>lookbook/lookbook.js</name><params/></action>
-        </reference>
-        <reference name="content">
-            <block type="lookbook/adminhtml_image_edit" name="lookbook.image.edit"></block>
-        </reference>
-    </lookbook_adminhtml_image_edit>
-</layout>
+?>
+<?php $element = $this->getElement(); ?>
+<div id="lookbookImageEdit">
+    <img id="lookbookImage" src="<?php echo $element->getUrl(); ?>" />
+</div>
+<input type="hidden" id="lookbookImageFocusX" name="focus_x" value="<?php echo $element->getFocusX(); ?>" />
+<input type="hidden" id="lookbookImageFocusY" name="focus_y" value="<?php echo $element->getFocusY(); ?>" />
+<script type="text/javascript">
+//<![CDATA[
+    document.observe('dom:loaded', function() {
+        new LookbookCrosshair({
+            imageId: 'lookbookImage',
+            focusXId: 'lookbookImageFocusX',
+            focusYId: 'lookbookImageFocusY'
+        });
+    });
+//]]>
+</script>

@@ -30,6 +30,53 @@
 class Zkilleman_Lookbook_Block_Adminhtml_Image_Helper_Image
         extends Varien_Data_Form_Element_Image
 {
+    /**
+     *
+     * @var string Template file 
+     */
+    protected $_template;
+    
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->_template = 'lookbook/image/helper/image.phtml';
+    }
+    
+    public function getElementHtml()
+    {
+        $html = parent::getElementHtml();
+        if ($this->getValue()) {
+            $html .= Mage::app()
+                ->getLayout()
+                ->createBlock('adminhtml/template')
+                ->setTemplate($this->_template)
+                ->setElement($this)
+                ->toHtml();
+        }
+        return $html;
+    }
+    
+    public function getValue()
+    {
+        $data = $this->getData('value');
+        return $data['value'];
+    }
+    
+    public function getFocusX()
+    {
+        $data = $this->getData('value');
+        return $data['focus_x'];
+    }
+    
+    public function getFocusY()
+    {
+        $data = $this->getData('value');
+        return $data['focus_y'];
+    }
+    
+    public function getUrl() {
+        return $this->_getUrl();
+    }
     
     protected function _getUrl()
     {

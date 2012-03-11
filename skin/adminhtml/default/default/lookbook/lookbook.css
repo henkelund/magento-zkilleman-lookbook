@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * Zkilleman_Lookbook
  *
@@ -27,26 +25,16 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
--->
-<layout>
-    <lookbook_adminhtml_image_index>
-        <reference name="content">
-            <block type="lookbook/adminhtml_image" name="lookbook.image"></block>
-        </reference>
-    </lookbook_adminhtml_image_index>
 
-    <lookbook_adminhtml_image_new>
-        <update handle="lookbook_adminhtml_image_edit" />
-    </lookbook_adminhtml_image_new>
-    
-    <lookbook_adminhtml_image_edit>
-        <update handle="editor"/>
-        <reference name="head">
-            <action method="addCss"><stylesheet>lookbook/lookbook.css</stylesheet></action>
-            <action method="addItem"><type>skin_js</type><name>lookbook/lookbook.js</name><params/></action>
-        </reference>
-        <reference name="content">
-            <block type="lookbook/adminhtml_image_edit" name="lookbook.image.edit"></block>
-        </reference>
-    </lookbook_adminhtml_image_edit>
-</layout>
+#lookbookImageEdit { width: 98%; position: relative; }
+#lookbookImageEdit img { width: 100%; }
+
+.focusCrosshair {
+    width: 24px;
+    height: 24px;
+    background: url('images/focus_crosshair') top left no-repeat;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    cursor: move;
+}
