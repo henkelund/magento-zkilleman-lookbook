@@ -85,9 +85,9 @@
                     <image_tag_index>
                         <table>lookbook_image_tag_index</table>
                     </image_tag_index>
-                    <image_tag_index_tmp>
+                    <image_tag_indexer_tmp>
                         <table>lookbook_image_tag_index_tmp</table>
-                    </image_tag_index_tmp>
+                    </image_tag_indexer_tmp>
                 </entities>
             </lookbook_resource>
         </models>
@@ -98,5 +98,12 @@
                 </setup>
             </lookbook_setup>
         </resources>
+        <index>
+            <indexer>
+                <lookbook_tag>
+                    <model>lookbook/indexer_tag</model>
+                </lookbook_tag>
+            </indexer>
+        </index>
     </global>
 </config>

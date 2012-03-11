@@ -151,4 +151,21 @@ $table = $installer->getConnection()
     ->setComment('Lookbook Image Tag Index Table');
 $installer->getConnection()->createTable($table);
 
+/**
+ * Create table 'lookbook/image_tag_indexer_tmp'
+ */
+$table = $installer->getConnection()
+    ->newTable($installer->getTable('lookbook/image_tag_indexer_tmp'))
+    ->addColumn('name', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => false,
+        'default'   => '',
+        'primary'   => true,
+        ), 'Name')
+    ->addColumn('count', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+        'unsigned'  => true,
+        'nullable'  => false,
+        ), 'Count')
+    ->setComment('Lookbook Image Tag Indexer Temp Table');
+$installer->getConnection()->createTable($table);
+
 $installer->endSetup();
