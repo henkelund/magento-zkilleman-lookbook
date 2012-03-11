@@ -79,4 +79,76 @@ $table = $installer->getConnection()
     ->setComment('Lookbook Image Table');
 $installer->getConnection()->createTable($table);
 
+/**
+ * Create table 'lookbook/image_tag'
+ */
+$table = $installer->getConnection()
+    ->newTable($installer->getTable('lookbook/image_tag'))
+    ->addColumn('tag_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+        'identity'  => true,
+        'unsigned'  => true,
+        'nullable'  => false,
+        'primary'   => true,
+        ), 'Tag ID')
+    ->addColumn('image_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+        'unsigned'  => true,
+        'nullable'  => false,
+        'default'   => '0',
+        ), 'Image ID')
+    ->addColumn('name', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => false,
+        'default'   => '',
+        ), 'Name')
+    ->addColumn('x', Varien_Db_Ddl_Table::TYPE_DECIMAL, '5,4', array(
+        'nullable'  => false,
+        'default'   => '-1.0000',
+        ), 'Horizontal Position')
+    ->addColumn('y', Varien_Db_Ddl_Table::TYPE_DECIMAL, '5,4', array(
+        'nullable'  => false,
+        'default'   => '-1.0000',
+        ), 'Vertical Position')
+    ->addColumn('type', Varien_Db_Ddl_Table::TYPE_TEXT, 32, array(
+        'nullable'  => false,
+        'default'   => '',
+        ), 'Tag Type')
+    ->addColumn('reference', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+        'unsigned'  => true,
+        'nullable'  => false,
+        'default'   => '0',
+        ), 'Reference')
+    ->addIndex($installer->getIdxName('lookbook/image_tag', array('image_id')),
+        array('image_id'))
+    ->addIndex($installer->getIdxName('lookbook/image_tag', array('type')),
+        array('type'))
+    ->addIndex($installer->getIdxName('lookbook/image_tag', array('reference')),
+        array('reference'))
+    ->addForeignKey(
+        $installer->getFkName(
+            'lookbook/image_tag',
+            'image_id',
+            'lookbook/image',
+            'image_id'
+        ),
+        'image_id', $installer->getTable('lookbook/image'), 'image_id',
+        Varien_Db_Ddl_Table::ACTION_CASCADE, Varien_Db_Ddl_Table::ACTION_CASCADE)
+    ->setComment('Lookbook Image Tag Table');
+$installer->getConnection()->createTable($table);
+
+/**
+ * Create table 'lookbook/image_tag_index'
+ */
+$table = $installer->getConnection()
+    ->newTable($installer->getTable('lookbook/image_tag_index'))
+    ->addColumn('name', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(
+        'nullable'  => false,
+        'default'   => '',
+        'primary'   => true,
+        ), 'Name')
+    ->addColumn('count', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+        'unsigned'  => true,
+        'nullable'  => false,
+        ), 'Count')
+    ->setComment('Lookbook Image Tag Index Table');
+$installer->getConnection()->createTable($table);
+
 $installer->endSetup();

@@ -79,6 +79,15 @@
                     <image>
                         <table>lookbook_image</table>
                     </image>
+                    <image_tag>
+                        <table>lookbook_image_tag</table>
+                    </image_tag>
+                    <image_tag_index>
+                        <table>lookbook_image_tag_index</table>
+                    </image_tag_index>
+                    <image_tag_index_tmp>
+                        <table>lookbook_image_tag_index_tmp</table>
+                    </image_tag_index_tmp>
                 </entities>
             </lookbook_resource>
         </models>
