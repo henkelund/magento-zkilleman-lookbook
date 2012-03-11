@@ -30,6 +30,8 @@
 class Zkilleman_Lookbook_Block_Adminhtml_Image_Grid
         extends Mage_Adminhtml_Block_Widget_Grid
 {
+    const THUMB_WIDTH  = 162;
+    const THUMB_HEIGHT = 100;
 
     public function __construct()
     {
@@ -110,7 +112,11 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Grid
         if ($isExport) {
             return $renderedValue;
         } else {
-            echo 'TODO';
+            return $row->getHtml(
+                    self::THUMB_WIDTH,
+                    self::THUMB_HEIGHT,
+                    array(),
+                    array('margin' => '0 auto'));
         }
     }
 }

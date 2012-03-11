@@ -29,16 +29,27 @@
 
 class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
 {
-    const STORAGE_PATH = 'lookbook';
+    const ORIGINAL_PATH = 'lookbook';
+    const CACHE_PATH    = 'lookbook/cache';
     
     public function getMediaBaseDir()
     {
-        return Mage::getBaseDir('media') . DS . self::STORAGE_PATH;
+        return Mage::getBaseDir('media') . DS . self::ORIGINAL_PATH;
     }
     
     public function getMediaBaseUrl()
     {
-        return Mage::getBaseUrl('media') . DS . self::STORAGE_PATH;
+        return Mage::getBaseUrl('media') . DS . self::ORIGINAL_PATH;
+    }
+    
+    public function getCachedMediaBaseDir()
+    {
+        return Mage::getBaseDir('media') . DS . self::CACHE_PATH;
+    }
+    
+    public function getCachedMediaBaseUrl()
+    {
+        return Mage::getBaseUrl('media') . DS . self::CACHE_PATH;
     }
     
     public function removeImageFile(Zkilleman_Lookbook_Model_Image $image)

@@ -58,4 +58,71 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         }
         return $image;
     }
+    
+    public function isLandscape()
+    {
+        return $this->getRatio() < 1;
+    }
+    
+    public function isPortrait()
+    {
+        return !$this->isLandscape();
+    }
+    
+    public function getUrl($width = null, $height = null)
+    {
+        $original = $this->createImageObject();
+        if (!$original) {
+            return false;
+        } else if (!$width && !$height) {
+            return $this->_helper->getMediaBaseUrl() . DS . $this->getFile();
+        }
+        if ($width && $height) {
+            $ratio = $height/$width;
+            if ($ratio > $this->getRatio()) {
+                $width = null;
+            } else {
+                $height = null;
+            }
+        }
+        $fileName = 
+                DS . ($width ? ('w' . $width) : ('h' . $height)) . $this->getFile();
+        
+        if (!file_exists($this->_helper->getCachedMediaBaseDir() . $fileName)) {
+            $original->keepTransparency(true);
+            $original->resize($width, $height);
+            $original->save($this->_helper->getCachedMediaBaseDir() . $fileName);
+        }
+        
+        return $this->_helper->getCachedMediaBaseUrl() . $fileName;
+    }
+    
+    public function getHtml(
+                            $width           = null,
+                            $height          = null,
+                            $attributes      = array(),
+                            $styleAttributes = array())
+    {
+        $styleAttributes = array_merge(array(
+            'width'               => $width . 'px',
+            'height'              => $height . 'px',
+            'background-image'    => sprintf(
+                    'url(\'%s\')', $this->getUrl($width, $height)),
+            'background-position' => sprintf(
+                    '%d%% %d%%', $this->getFocusX() * 100, $this->getFocusY() * 100)
+        ), $styleAttributes);
+        $styleAttributePairs = array();
+        foreach ($styleAttributes as $key => $value) {
+            if ($value) {
+                $styleAttributePairs[] = sprintf('%s: %s;', $key, $value);
+            }
+        }
+        $attributes['style'] = implode(' ', $styleAttributePairs);
+        $attributeString = '';
+        foreach ($attributes as $key => $value) {
+            $attributeString .= sprintf(' %s="%s"', $key, $value);
+        }
+        
+        return sprintf('<div%s></div>', $attributeString);
+    }
 }
