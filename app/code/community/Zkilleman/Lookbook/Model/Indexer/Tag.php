@@ -64,7 +64,7 @@ class Zkilleman_Lookbook_Model_Indexer_Tag extends Mage_Index_Model_Indexer_Abst
         if ($event->getEntity() == Zkilleman_Lookbook_Model_Image_Tag::ENTITY) {
             $tag = $event->getDataObject();
             if ($tag->dataHasChangedFor('name')) {
-                $event->addNewData('reindex_tag_names', array($tag->getName()));
+                $event->addNewData('reindex_tags', array($tag));
             }
         }
         return $this;
@@ -79,9 +79,9 @@ class Zkilleman_Lookbook_Model_Indexer_Tag extends Mage_Index_Model_Indexer_Abst
     {
         $data = $event->getNewData();
         
-        if(isset($data['reindex_tag_names'])) {
-            foreach ($data['reindex_tag_names'] as $tagName) {
-                // @todo
+        if(isset($data['reindex_tags'])) {
+            foreach ($data['reindex_tags'] as $tag) {
+                $this->_getResource()->reindexTag($tag);
             }
         }
     }

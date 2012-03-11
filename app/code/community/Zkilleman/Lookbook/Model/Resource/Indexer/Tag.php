@@ -33,6 +33,40 @@ class Zkilleman_Lookbook_Model_Resource_Indexer_Tag
     protected function _construct()
     {
         $this->_init('lookbook/image_tag_index', 'name');
+        $this->_isPkAutoIncrement = false;
+        $this->_useIsObjectNew = false;
+    }
+    
+    public function reindexTag(Zkilleman_Lookbook_Model_Image_Tag $tag)
+    {
+        if ($tag->dataHasChangedFor('name')) {
+            $this->reindexTagName($tag->getName());
+            if (!$tag->isObjectNew()) {
+                $this->reindexTagName($tag->getOrigData('name'));
+            }
+        }
+    }
+    
+    public function reindexTagName($name)
+    {
+        $idxTag = Mage::getModel('lookbook/indexer_tag')->load($name);
+        if (!$idxTag->getId()) {
+            $idxTag->setName($name);
+        }
+
+        $write = $this->_getWriteAdapter();
+
+        $select = $write->select()
+            ->from($this->getTable('lookbook/image_tag'), array('name'))
+            ->where('name = ?', $name);
+
+        $idxTag->setCount($select->query()->rowCount());
+
+        if ($idxTag->getCount() > 0) {
+            $idxTag->save();
+        } else {
+            $idxTag->delete();
+        }
     }
 
     public function reindexAll()

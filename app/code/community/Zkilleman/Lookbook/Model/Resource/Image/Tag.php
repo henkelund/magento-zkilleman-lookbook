@@ -27,25 +27,11 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 
-class Zkilleman_Lookbook_Model_Image_Tag extends Mage_Core_Model_Abstract
+class Zkilleman_Lookbook_Model_Resource_Image_Tag
+        extends Mage_Core_Model_Resource_Db_Abstract
 {
-    const ENTITY = 'lookbook_image_tag';
-
-    /**
-     * Internal constructor
-     *
-     */
     protected function _construct()
     {
-        $this->_init('lookbook/image_tag');
-    }
-    
-    public function afterCommitCallback()
-    {
-        parent::afterCommitCallback();
-        Mage::getSingleton('index/indexer')->processEntityAction(
-            $this, self::ENTITY, Mage_Index_Model_Event::TYPE_SAVE
-        );
-        return $this;
+        $this->_init('lookbook/image_tag', 'tag_id');
     }
 }
