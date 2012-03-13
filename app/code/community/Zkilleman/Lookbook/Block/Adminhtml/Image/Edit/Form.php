@@ -60,6 +60,12 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Edit_Form extends Mage_Adminhtml_
             ));
         }
 
+        $fieldset->addField('file', 'image', array(
+            'name'      => 'file',
+            'label'     => $this->__('File'),
+            'title'     => $this->__('File')
+        ));
+
         $fieldset->addField('title', 'text', array(
             'name'      => 'title',
             'label'     => $this->__('Image Title'),
@@ -71,12 +77,6 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Edit_Form extends Mage_Adminhtml_
             'name'      => 'caption',
             'label'     => $this->__('Caption'),
             'title'     => $this->__('Caption')
-        ));
-
-        $fieldset->addField('file', 'image', array(
-            'name'      => 'file',
-            'label'     => $this->__('File'),
-            'title'     => $this->__('File')
         ));
 
         $fieldset->addField('is_active', 'select', array(
@@ -93,7 +93,8 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Edit_Form extends Mage_Adminhtml_
         $data['file'] = array(
             'value'   => isset($data['file']) ? $data['file'] : null,
             'focus_x' => $model->getFocusX(),
-            'focus_y' => $model->getFocusY()
+            'focus_y' => $model->getFocusY(),
+            'tags'    => $model->getTags()
         );
         
         $form->setValues($data);

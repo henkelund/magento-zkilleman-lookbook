@@ -125,4 +125,13 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         
         return sprintf('<div%s></div>', $attributeString);
     }
+    
+    public function getTags()
+    {
+        if (!$this->getId()) {
+            return null;
+        }
+        return Mage::getModel('lookbook/image_tag')->getCollection()
+                ->addFieldToFilter('image_id', $this->getId());
+    }
 }

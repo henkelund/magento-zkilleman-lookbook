@@ -28,19 +28,37 @@
  */
 ?>
 <?php $element = $this->getElement(); ?>
-<div id="lookbookImageEdit">
+<div id="lookbookImageWrapper">
     <img id="lookbookImage" src="<?php echo $element->getUrl(); ?>" />
 </div>
+<ul id="lookbookTagList"></ul>
 <input type="hidden" id="lookbookImageFocusX" name="focus_x" value="<?php echo $element->getFocusX(); ?>" />
 <input type="hidden" id="lookbookImageFocusY" name="focus_y" value="<?php echo $element->getFocusY(); ?>" />
 <script type="text/javascript">
 //<![CDATA[
-    document.observe('dom:loaded', function() {
+    $('lookbookImage').observe('load', function() {
         new LookbookCrosshair({
-            imageId: 'lookbookImage',
+            imageId:  'lookbookImage',
             focusXId: 'lookbookImageFocusX',
-            focusYId: 'lookbookImageFocusY'
+            focusYId: 'lookbookImageFocusY',
+            title:    '<?php echo $this->__('Double click to center focus'); ?>'
         });
+        new LookbookTagInput({
+            tagListId: 'lookbookTagList',
+            imageId:   'lookbookImage',
+            fieldName: '<?php echo $element->getName(); ?>',
+            suggestionUrl: '<?php echo $this->getUrl('*/adminhtml_image_tag/suggestion'); ?>'
+        });
+        <?php if ($element->getTags()): foreach ($element->getTags() as $tag): ?>
+            new LookbookTag(
+                <?php echo $tag->toJson(); ?>,
+                {
+                    tagListId: 'lookbookTagList',
+                    imageId:   'lookbookImage',
+                    fieldName: '<?php echo $element->getName(); ?>'
+                }
+            );
+        <?php endforeach; endif; ?>
     });
 //]]>
 </script>

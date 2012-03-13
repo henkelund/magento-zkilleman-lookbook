@@ -61,6 +61,12 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Helper_Image
         $data = $this->getData('value');
         return $data['value'];
     }
+
+    public function getTags()
+    {
+        $data = $this->getData('value');
+        return $data['tags'];
+    }
     
     public function getFocusX()
     {

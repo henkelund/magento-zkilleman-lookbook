@@ -26,8 +26,8 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 
-#lookbookImageEdit { width: 98%; position: relative; }
-#lookbookImageEdit img { width: 100%; }
+#lookbookImageWrapper { width: 98%; position: relative; }
+img#lookbookImage { width: 100%; }
 
 .focusCrosshair {
     width: 24px;
@@ -37,4 +37,80 @@
     top: 0px;
     left: 0px;
     cursor: move;
+    z-index: 10;
+}
+
+ul#lookbookTagList {
+    width: 98%;
+    min-height: 25px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
+    background: white;
+    font: 12px arial, helvetica, sans-serif;
+    position: relative;
+}
+ul#lookbookTagList li {
+    position: relative;
+    float: left;
+    padding: 2px 18px 2px 5px;
+    margin: 2px 0 0px 3px;
+}
+ul#lookbookTagList li.entry {
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 3px;
+    -o-border-radius: 4px;
+    -ms-border-radius: 4px;
+    border-radius: 4px;
+    zoom: 1;
+    border: 1px solid;
+    border-color: #ed6502 #a04300 #a04300 #ed6502;
+    background: #ffac47 url(../images/btn_bg.gif) repeat-x 0 100%;
+    background-color: #fcaf81;
+    color: white;
+    font-weight: bold;
+    cursor: move;
+}
+ul#lookbookTagList li.entry span.remove {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 16px;
+    height: 16px;
+    background: url('../images/cancel_btn_icon.gif');
+    cursor: pointer;
+}
+ul#lookbookTagList li input {
+    background: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+}
+ul#lookbookTagList li ul.suggestion-menu {
+    position: absolute;
+    z-index: 999;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
+    background: white;
+    font: 12px arial, helvetica, sans-serif;
+    padding: 0;
+    box-shadow: 0 1px 2px #c8c8c8;
+}
+ul#lookbookTagList li ul.suggestion-menu li {
+    display: block;
+    float: none;
+    white-space: nowrap;
+    border-bottom: 1px solid white;
+    margin: 0;
+    cursor: pointer;
+}
+ul#lookbookTagList li ul.suggestion-menu li:hover,
+ul#lookbookTagList li ul.suggestion-menu li.selected {
+    background-color: #fff9e9;
+    border-bottom: 1px solid #eee2be;
 }
