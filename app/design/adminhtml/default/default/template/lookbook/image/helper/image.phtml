@@ -44,10 +44,10 @@
             title:    '<?php echo $this->__('Double click to center focus'); ?>'
         });
         new LookbookTagInput({
-            tagListId: 'lookbookTagList',
-            imageId:   'lookbookImage',
-            fieldName: '<?php echo $element->getName(); ?>',
-            suggestionUrl: '<?php echo $this->getUrl('*/adminhtml_image_tag/suggestion'); ?>'
+            tagListId:       'lookbookTagList',
+            imageId:         'lookbookImage',
+            fieldName:       '<?php echo $element->getName(); ?>',
+            autocompleteUrl: '<?php echo $this->getUrl('*/adminhtml_image_tag/autocomplete'); ?>'
         });
         <?php if ($element->getTags()): foreach ($element->getTags() as $tag): ?>
             new LookbookTag(

@@ -173,6 +173,8 @@ LookbookTag.prototype = {
     
     _inputElems: {},
     
+    _typeContainer: null,
+    
     _draggable: null,
     
     /**
@@ -212,6 +214,7 @@ LookbookTag.prototype = {
         // Create root LI element
         this._elem = new Element('li');
         this._elem.addClassName('entry');
+        this._elem.ondblclick = this.toggleExpandCollapse.bind(this);
         // Add remove button
         var removeButton = new Element('span', {title: this._config.removeTitle});
         removeButton.addClassName('remove');
@@ -222,6 +225,20 @@ LookbookTag.prototype = {
         nameLabel.addClassName('name');
         nameLabel.insert(this._data.name);
         this._elem.appendChild(nameLabel);
+        // Add type form container
+        this._typeContainer = new Element('div');
+        this._typeContainer.addClassName('type-container');
+        this._typeContainer.hide();
+        //
+        var select = new Element('select');
+        var option1 = new Element('option', {value: 'plain'});
+        option1.innerHTML = 'Plain Tag';
+        select.appendChild(option1);
+        var option2 = new Element('option', {value: 'product'});
+        option2.innerHTML = 'Product';
+        select.appendChild(option2);
+        this._typeContainer.appendChild(select);
+        this._elem.appendChild(this._typeContainer);
     },
     
     _getFieldId: function(name)
@@ -298,6 +315,11 @@ LookbookTag.prototype = {
         }
     },
     
+    toggleExpandCollapse: function()
+    {
+        Effect.toggle(this._typeContainer, 'blind', {duration: 0.25});
+    },
+    
     remove: function()
     {
         this._draggable.destroy();
@@ -326,12 +348,6 @@ LookbookTagInput.prototype = {
     
     _inputElem: null,
     
-    _suggestions: new Array(),
-    
-    _suggestionMenuElem: null,
-    
-    _suggestionRequest: null,
-    
     /**
      * Constructor
      *
@@ -345,22 +361,28 @@ LookbookTagInput.prototype = {
             }
         }
         this._listElem = $(this._config.tagListId);
-        this._inputElem = new Element('input', {size: '1'});
+        var inputId = this._config.tagListId + 'Input';
+        this._inputElem = new Element('input', {id: inputId, size: '1'});
         this._inputElem.observe('keyup', this.keyReleased.bind(this));
         var containerElem = new Element('li');
         containerElem.addClassName('input-container');
         containerElem.insert(this._inputElem);
-        this._suggestionMenuElem = new Element('ul');
-        this._suggestionMenuElem.addClassName('suggestion-menu');
-        containerElem.insert(this._suggestionMenuElem);
+        var autocompleteId = this._config.tagListId + 'Autocomplete';
+        var autocomplete = new Element('div', {id: autocompleteId});
+        containerElem.insert(autocomplete);
         this._listElem.insert(containerElem);
+        new Ajax.Autocompleter(
+            inputId, autocompleteId,
+            this._config.autocompleteUrl,
+            {
+                paramName:     'q',
+                updateElement: this.autocompleted.bind(this)
+            }
+        );
     },
     
     keyReleased: function(event)
     {
-        if (this._suggestionRequest && !this._suggestionRequest._complete) {
-            this._suggestionRequest.transport.abort();
-        }
         var text = this._inputElem.value.replace(/^\s+/, ''); // ltrim
         if (text.length == 0) {
             this._inputElem.value = '';
@@ -385,24 +407,15 @@ LookbookTagInput.prototype = {
                 } else {
                     this._inputElem.value = text;
                     this._inputElem.setAttribute('size', Math.max(1, text.length));
-                    var url = this._config.suggestionUrl;
-                    var self = this;
-                    this._suggestionRequest = new Ajax.Request(url, {
-                        parameters: {q: text},
-                        onSuccess: function(transport) {
-                            if (transport.responseText.isJSON()) {
-                                var response = transport.responseText.evalJSON();
-                                self._suggestions = response;
-                                self.buildSuggestionMenu().bind(self);
-                            }
-                        },
-                        onComplete: function() {
-                            self._suggestionRequest = null;
-                        }
-                    });
                 }
                 break;
         }
+    },
+    
+    autocompleted: function(li)
+    {
+        this._inputElem.value = li.getAttribute('rel');
+        this.createTag();
     },
     
     createTag: function()
@@ -417,23 +430,5 @@ LookbookTagInput.prototype = {
         });
         this._inputElem.value = '';
         this._inputElem.focus();
-    },
-    
-    buildSuggestionMenu: function()
-    {
-        self = this;
-        var menu = this._suggestionMenuElem;
-        menu.update('');
-        for (var i = 0; i < this._suggestions.length; ++i) {
-            var li = new Element('li', {rel: this._suggestions[i].name});
-            li.update(this._suggestions[i].html);
-            li.observe('click', function() {
-                self._suggestions = new Array();
-                self.buildSuggestionMenu();
-                self._inputElem.value = this.getAttribute('rel');
-                self.createTag();
-            });
-            menu.insert(li);
-        }
     }
 };

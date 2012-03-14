@@ -53,7 +53,7 @@ ul#lookbookTagList {
 ul#lookbookTagList li {
     position: relative;
     float: left;
-    padding: 2px 18px 2px 5px;
+    padding: 2px;
     margin: 2px 0 0px 3px;
 }
 ul#lookbookTagList li.entry {
@@ -66,7 +66,6 @@ ul#lookbookTagList li.entry {
     border: 1px solid;
     border-color: #ed6502 #a04300 #a04300 #ed6502;
     background: #ffac47 url(../images/btn_bg.gif) repeat-x 0 100%;
-    background-color: #fcaf81;
     color: white;
     font-weight: bold;
     cursor: move;
@@ -80,6 +79,12 @@ ul#lookbookTagList li.entry span.remove {
     background: url('../images/cancel_btn_icon.gif');
     cursor: pointer;
 }
+ul#lookbookTagList li.entry span.name {
+    margin-right: 16px;
+}
+ul#lookbookTagList li.entry div.type-container select {
+    width: 200px;
+}
 ul#lookbookTagList li input {
     background: none;
     margin: 0;
@@ -90,9 +95,8 @@ ul#lookbookTagList li input {
     width: 100%;
     cursor: pointer;
 }
-ul#lookbookTagList li ul.suggestion-menu {
+#lookbookTagListAutocomplete ul {
     position: absolute;
-    z-index: 999;
     border-width: 1px;
     border-style: solid;
     border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
@@ -101,7 +105,7 @@ ul#lookbookTagList li ul.suggestion-menu {
     padding: 0;
     box-shadow: 0 1px 2px #c8c8c8;
 }
-ul#lookbookTagList li ul.suggestion-menu li {
+#lookbookTagListAutocomplete ul li {
     display: block;
     float: none;
     white-space: nowrap;
@@ -109,8 +113,8 @@ ul#lookbookTagList li ul.suggestion-menu li {
     margin: 0;
     cursor: pointer;
 }
-ul#lookbookTagList li ul.suggestion-menu li:hover,
-ul#lookbookTagList li ul.suggestion-menu li.selected {
+#lookbookTagListAutocomplete ul li:hover,
+#lookbookTagListAutocomplete ul li.selected {
     background-color: #fff9e9;
     border-bottom: 1px solid #eee2be;
 }

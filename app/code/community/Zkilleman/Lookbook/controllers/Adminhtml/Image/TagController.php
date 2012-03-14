@@ -30,7 +30,7 @@
 class Zkilleman_Lookbook_Adminhtml_Image_TagController
         extends Mage_Adminhtml_Controller_Action
 {
-    public function suggestionAction()
+    public function autocompleteAction()
     {
         $result = array();
         $q = $this->getRequest()->getParam('q');
@@ -40,7 +40,7 @@ class Zkilleman_Lookbook_Adminhtml_Image_TagController
             $tags->getSelect()
                     ->where('name LIKE ? ESCAPE "="', '%' . $escQ . '%')
                     ->order('count DESC')
-                    ->limit(10);
+                    ->limit(5);
             foreach ($tags as $tag) {
                 $data = $tag->getData();
                 $data['html'] = preg_replace(
@@ -48,11 +48,11 @@ class Zkilleman_Lookbook_Adminhtml_Image_TagController
                         '<strong>$1</strong>',
                         htmlspecialchars($data['name'])) .
                         sprintf(' (%s)', $data['count']);
-                $result[] = $data;
+                $result[] = sprintf(
+                        '<li rel="%s">%s</li>', $data['name'], $data['html']);
             }
         }
         $this->getResponse()
-                ->setHeader('Content-type', 'text/json')
-                ->setBody(Mage::helper('core')->jsonEncode($result));
+                ->setBody(sprintf('<ul>%s</ul>', implode('', $result)));
     }
 }
