@@ -35,7 +35,8 @@ class Zkilleman_Lookbook_Model_Indexer_Tag extends Mage_Index_Model_Indexer_Abst
      */
     protected $_matchedEntities = array(
         Zkilleman_Lookbook_Model_Image_Tag::ENTITY => array(
-            Mage_Index_Model_Event::TYPE_SAVE
+            Mage_Index_Model_Event::TYPE_SAVE,
+            Mage_Index_Model_Event::TYPE_DELETE
         )
     );
 
@@ -63,7 +64,8 @@ class Zkilleman_Lookbook_Model_Indexer_Tag extends Mage_Index_Model_Indexer_Abst
     {
         if ($event->getEntity() == Zkilleman_Lookbook_Model_Image_Tag::ENTITY) {
             $tag = $event->getDataObject();
-            if ($tag->dataHasChangedFor('name')) {
+            if ($tag->dataHasChangedFor('name') || 
+                    $event->getType() == Mage_Index_Model_Event::TYPE_DELETE) {
                 $event->addNewData('reindex_tags', array($tag));
             }
         }

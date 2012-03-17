@@ -48,4 +48,20 @@ class Zkilleman_Lookbook_Model_Image_Tag extends Mage_Core_Model_Abstract
         );
         return $this;
     }
+    
+    protected function _beforeDelete()
+    {
+        Mage::getSingleton('index/indexer')->logEvent(
+            $this, self::ENTITY, Mage_Index_Model_Event::TYPE_DELETE
+        );
+        return parent::_beforeDelete();
+    }
+
+    protected function _afterDeleteCommit()
+    {
+        parent::_afterDeleteCommit();
+        Mage::getSingleton('index/indexer')->indexEvents(
+            self::ENTITY, Mage_Index_Model_Event::TYPE_DELETE
+        );
+    }
 }

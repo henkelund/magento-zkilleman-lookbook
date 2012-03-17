@@ -103,11 +103,6 @@ class Zkilleman_Lookbook_Adminhtml_ImageController
             if (isset($data['file_tags']) && is_array($data['file_tags'])) {
                 foreach ($data['file_tags'] as $tag) {
                     $tag['name'] = trim($tag['name'], '" ');
-                    if ($tag['x'] < 0 || $tag['x'] > 1 ||
-                            $tag['y'] < 0 || $tag['y'] > 1) {
-                        $tag['x'] = -1;
-                        $tag['y'] = -1;
-                    }
                     if (isset($tag['tag_id']) && $tag['tag_id'] > 0) {
                         $oldTags[$tag['tag_id']] = $tag;
                     } else {
@@ -165,6 +160,7 @@ class Zkilleman_Lookbook_Adminhtml_ImageController
                 $model = Mage::getModel('lookbook/image');
                 $model->load($id);
                 Mage::helper('lookbook')->removeImageFile($model);
+                $model->getTags()->walk('delete');
                 $title = $model->getTitle();
                 $model->delete();
 

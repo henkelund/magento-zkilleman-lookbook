@@ -319,10 +319,11 @@ LookbookTag.prototype = {
             this._elem.style.position = 'relative';
             this._elem.style.top = '0px';
             this._elem.style.left = '0px';
-        } else {
-            $(this._getFieldId('x')).value = x.toFixed(4);
-            $(this._getFieldId('y')).value = y.toFixed(4);
+            x = -1;
+            y = -1;
         }
+        $(this._getFieldId('x')).value = x.toFixed(4);
+        $(this._getFieldId('y')).value = y.toFixed(4);
     },
     
     toggleExpandCollapse: function()

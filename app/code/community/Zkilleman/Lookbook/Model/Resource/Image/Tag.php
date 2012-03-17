@@ -34,4 +34,13 @@ class Zkilleman_Lookbook_Model_Resource_Image_Tag
     {
         $this->_init('lookbook/image_tag', 'tag_id');
     }
+    
+    protected function _beforeSave(Mage_Core_Model_Abstract $object)
+    {
+        if ($object->getX() < 0 || $object->getX() > 1 ||
+                $object->getY() < 0 || $object->getY() > 1) {
+            $object->setX(-1)->setY(-1);
+        }
+        return $this;
+    }
 }

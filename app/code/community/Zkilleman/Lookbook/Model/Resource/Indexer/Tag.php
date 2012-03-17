@@ -39,11 +39,9 @@ class Zkilleman_Lookbook_Model_Resource_Indexer_Tag
     
     public function reindexTag(Zkilleman_Lookbook_Model_Image_Tag $tag)
     {
-        if ($tag->dataHasChangedFor('name')) {
-            $this->reindexTagName($tag->getName());
-            if (!$tag->isObjectNew()) {
-                $this->reindexTagName($tag->getOrigData('name'));
-            }
+        $this->reindexTagName($tag->getName());
+        if ($tag->dataHasChangedFor('name') && !$tag->isObjectNew()) {
+            $this->reindexTagName($tag->getOrigData('name'));
         }
     }
     
