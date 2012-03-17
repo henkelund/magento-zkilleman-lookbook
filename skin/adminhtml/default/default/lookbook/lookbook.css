@@ -83,7 +83,7 @@ ul#lookbookTagList li.entry span.name {
     margin-right: 16px;
 }
 ul#lookbookTagList li.entry div.type-container select {
-    width: 200px;
+    width: 128px;
 }
 ul#lookbookTagList li input {
     background: none;
@@ -109,12 +109,14 @@ ul#lookbookTagList li input {
     display: block;
     float: none;
     white-space: nowrap;
-    border-bottom: 1px solid white;
+    border: 1px solid white;
     margin: 0;
     cursor: pointer;
 }
 #lookbookTagListAutocomplete ul li:hover,
 #lookbookTagListAutocomplete ul li.selected {
-    background-color: #fff9e9;
-    border-bottom: 1px solid #eee2be;
+    color: white;
+    background: #ffac47 url(../images/btn_bg.gif) repeat-x 0 100%;
+    border: 1px solid;
+    border-color: #ed6502 #a04300 #a04300 #ed6502;
 }

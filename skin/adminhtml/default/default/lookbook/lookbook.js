@@ -55,12 +55,7 @@ LookbookCrosshair.prototype = {
      *
      * @var _config Default config values
      */
-    _config: {
-        imageId:  'lookbookImage',
-        focusXId: 'lookbookImageFocusX',
-        focusYId: 'lookbookImageFocusY',
-        title:    'Double click to center focus'
-    },
+    _config: null,
     
     x: 0.5,
     
@@ -77,6 +72,12 @@ LookbookCrosshair.prototype = {
      */
     initialize: function(config)
     {
+        this._config = {
+            imageId:  'lookbookImage',
+            focusXId: 'lookbookImageFocusX',
+            focusYId: 'lookbookImageFocusY',
+            title:    'Double click to center focus'
+        };
         if (typeof config == 'object') {
             for (var key in config) {
                 this._config[key] = config[key];
@@ -158,20 +159,17 @@ LookbookTag.prototype = {
      *
      * @var _config Default config values
      */
-    _config: {
-        tagListId:   'lookbookTagList',
-        imageId:     'lookbookImage',
-        fieldName:   'file',
-        removeTitle: 'Remove tag'
-    },
+    _config: null,
     
-    _data: {x: -1, y: -1},
+    _data: null,
     
     _elem: null,
     
     _image: null,
     
-    _inputElems: {},
+    _inputElems: null,
+    
+    _inputElemPrefix: null,
     
     _typeContainer: null,
     
@@ -185,17 +183,27 @@ LookbookTag.prototype = {
      */
     initialize: function(data, config)
     {
+        this._data = {x: -1, y: -1};
         if (typeof data == 'object') {
             for (var dkey in data) {
                 this._data[dkey] = data[dkey];
             }
+        }
+        this._config = {
+            index:       0,
+            tagListId:   'lookbookTagList',
+            imageId:     'lookbookImage',
+            fieldName:   'file',
+            removeTitle: 'Remove tag'
         }
         if (typeof config == 'object') {
             for (var ckey in config) {
                 this._config[ckey] = config[ckey];
             }
         }
-        this._config.index = LookbookTag.instanceCount++;
+        this._config.index = ++LookbookTag.instanceCount;
+        this._inputElemPrefix = this._config.fieldName + '_' + 
+                                    this._config.index + '_';
         this._createElement();
         this._createInputElements();
         this._image = $(this._config.imageId);
@@ -243,16 +251,17 @@ LookbookTag.prototype = {
     
     _getFieldId: function(name)
     {
-        return this._config.fieldName + '_' + this._config.index + '_' + name;
+        return this._inputElemPrefix + name;
     },
     
     _createInputElements: function()
     {
+        this._inputElems = {};
         for (var name in this._data) {
             this._inputElems[name] = new Element('input', {
                 id:    this._getFieldId(name),
                 type:  'hidden',
-                name:  this._config.fieldName + 
+                name:  this._config.fieldName + '_tags' +
                             '[' + this._config.index + '][' + name + ']',
                 value: this._data[name]
             });
@@ -311,7 +320,8 @@ LookbookTag.prototype = {
             this._elem.style.top = '0px';
             this._elem.style.left = '0px';
         } else {
-            // update fields
+            $(this._getFieldId('x')).value = x.toFixed(4);
+            $(this._getFieldId('y')).value = y.toFixed(4);
         }
     },
     
@@ -338,11 +348,7 @@ LookbookTagInput.prototype = {
      *
      * @var _config Default config values
      */
-    _config: {
-        tagListId: 'lookbookTagList',
-        imageId:   'lookbookImage',
-        fieldName: 'file'
-    },
+    _config: null,
     
     _listElem: null,
     
@@ -355,6 +361,11 @@ LookbookTagInput.prototype = {
      */
     initialize: function(config)
     {
+        this._config = {
+            tagListId: 'lookbookTagList',
+            imageId:   'lookbookImage',
+            fieldName: 'file'
+        };
         if (typeof config == 'object') {
             for (var key in config) {
                 this._config[key] = config[key];
@@ -391,7 +402,7 @@ LookbookTagInput.prototype = {
         switch (event.keyCode) {
             case Event.KEY_DOWN:
             case Event.KEY_UP:
-                //alert('scroll');
+                // ...
                 break;
             case Event.KEY_RETURN:
                 this.createTag();

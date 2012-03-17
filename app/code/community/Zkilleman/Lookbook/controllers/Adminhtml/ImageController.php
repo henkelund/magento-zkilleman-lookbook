@@ -98,6 +98,25 @@ class Zkilleman_Lookbook_Adminhtml_ImageController
                 unset($data['file']);
             }
             
+            $oldTags = array();
+            $newTags = array();
+            if (isset($data['file_tags']) && is_array($data['file_tags'])) {
+                foreach ($data['file_tags'] as $tag) {
+                    $tag['name'] = trim($tag['name'], '" ');
+                    if ($tag['x'] < 0 || $tag['x'] > 1 ||
+                            $tag['y'] < 0 || $tag['y'] > 1) {
+                        $tag['x'] = -1;
+                        $tag['y'] = -1;
+                    }
+                    if (isset($tag['tag_id']) && $tag['tag_id'] > 0) {
+                        $oldTags[$tag['tag_id']] = $tag;
+                    } else {
+                        $newTags[] = $tag;
+                    }
+                }
+            }
+            unset($data['file_tags']);
+
             $model->setData($data);
 
             try {
@@ -106,6 +125,21 @@ class Zkilleman_Lookbook_Adminhtml_ImageController
                         $this->__('The image has been saved.'));
                 Mage::getSingleton('adminhtml/session')->setFormData(false);
 
+                if ($tags = $model->getTags()) {
+                    foreach ($tags as $tag) {
+                        if (array_key_exists($tag->getId(), $oldTags)) {
+                            $tag->setData($oldTags[$tag->getId()])->save();
+                        } else {
+                            $tag->delete();
+                        }
+                    }
+                }
+
+                foreach ($newTags as $tag) {
+                    $newTag = Mage::getModel('lookbook/image_tag');
+                    $newTag->setData($tag)->setImageId($model->getId())->save();
+                }
+                
                 if ($this->getRequest()->getParam('back')) {
                     $this->_redirect('*/*/edit', array('image_id' => $model->getId()));
                     return;
