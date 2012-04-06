@@ -1,0 +1,13 @@
+Zkilleman_Lookbook
+
+This project is intended to provide a Magento module for presenting inspirational
+and/or informative images in a visually appealing manner.
+
+The module is currently under construction and not yet in a useful state.
+It is being developed for Magento >= 1.6 with no backward compatibility in mind.
+
+If this project ever reaches completion it will be provided under the terms of the
+GNU General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version.
+Please refer to the file COPYING or http://www.gnu.org/licenses/gpl.html for the
+complete license text.
