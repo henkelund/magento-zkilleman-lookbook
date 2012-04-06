@@ -152,7 +152,8 @@ LookbookCrosshair.prototype = {
  * 
  */
 var LookbookTag = Class.create();
-LookbookTag.instanceCount = 0;
+LookbookTag._instanceCount = 0;
+LookbookTag._tagTypes = [];
 LookbookTag.prototype = {
     
     /**
@@ -172,6 +173,10 @@ LookbookTag.prototype = {
     _inputElemPrefix: null,
     
     _typeContainer: null,
+    
+    _typeSelect: null,
+    
+    _typeContentContainer: null,
     
     _draggable: null,
     
@@ -201,7 +206,7 @@ LookbookTag.prototype = {
                 this._config[ckey] = config[ckey];
             }
         }
-        this._config.index = ++LookbookTag.instanceCount;
+        this._config.index = ++LookbookTag._instanceCount;
         this._inputElemPrefix = this._config.fieldName + '_' + 
                                     this._config.index + '_';
         this._createElement();
@@ -231,21 +236,15 @@ LookbookTag.prototype = {
         // Add name label
         var nameLabel = new Element('span');
         nameLabel.addClassName('name');
-        nameLabel.insert(this._data.name);
+        nameLabel.insert(this._data.name
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
         this._elem.appendChild(nameLabel);
         // Add type form container
         this._typeContainer = new Element('div');
         this._typeContainer.addClassName('type-container');
         this._typeContainer.hide();
-        //
-        var select = new Element('select');
-        var option1 = new Element('option', {value: 'plain'});
-        option1.innerHTML = 'Plain Tag';
-        select.appendChild(option1);
-        var option2 = new Element('option', {value: 'product'});
-        option2.innerHTML = 'Product';
-        select.appendChild(option2);
-        this._typeContainer.appendChild(select);
+        this._typeContentContainer = new Element('div');
+        this._typeContainer.appendChild(this._typeContentContainer);
         this._elem.appendChild(this._typeContainer);
     },
     
@@ -254,17 +253,43 @@ LookbookTag.prototype = {
         return this._inputElemPrefix + name;
     },
     
+    _getFieldName: function(name)
+    {
+        return this._config.fieldName + '_tags' + 
+                    '[' + this._config.index + '][' + name + ']';
+    },
+    
     _createInputElements: function()
     {
         this._inputElems = {};
         for (var name in this._data) {
-            this._inputElems[name] = new Element('input', {
-                id:    this._getFieldId(name),
-                type:  'hidden',
-                name:  this._config.fieldName + '_tags' +
-                            '[' + this._config.index + '][' + name + ']',
-                value: this._data[name]
-            });
+            var fieldName = this._getFieldName(name);
+            switch (name) {
+                case 'type':
+                    this._typeSelect = new Element('select', {name: fieldName});
+                    for (var i = 0; i < LookbookTag._tagTypes.length; ++i) {
+                        var option = new Element('option', {
+                                            value: LookbookTag._tagTypes[i].key});
+                        option.innerHTML = LookbookTag._tagTypes[i].label;
+                        option.selected = (option.value == this._data[name]);
+                        this._typeSelect.appendChild(option);
+                    }
+                    this._typeSelect.observe('change', this.typeSelected.bind(this));
+                    this._typeContainer.insert({top: this._typeSelect});
+                    break;
+                case 'reference':
+                    // Do nothing. It's the type instance's job to 
+                    // provide form input
+                    break;
+                default:
+                    this._inputElems[name] = new Element('input', {
+                        id:    this._getFieldId(name),
+                        type:  'hidden',
+                        name:  fieldName,
+                        value: this._data[name]
+                    });
+                    break;
+            }
         }
         for (var elem in this._inputElems) {
             this._elem.insert({bottom: this._inputElems[elem]});
@@ -328,7 +353,41 @@ LookbookTag.prototype = {
     
     toggleExpandCollapse: function()
     {
-        Effect.toggle(this._typeContainer, 'blind', {duration: 0.25});
+        var self = this;
+        Effect.toggle(this._typeContainer, 'blind', {
+            duration: 0.25,
+            afterFinish: function() {
+                if (self._typeContainer.visible()) {
+                    self.typeSelected();
+                }
+            }
+        });
+    },
+    
+    typeSelected: function()
+    {
+        var self = this;
+        new Ajax.Request(this._config.typeUrl, {
+            parameters: {
+                tag_id:     self._data.tag_id,
+                type:       self._typeSelect.value,
+                field_name: self._getFieldName('reference'),
+                field_id:   self._getFieldId('reference')
+            },
+            onSuccess: function(transport) {
+                var object = transport.responseJSON;
+                if (!typeof object == 'object') {
+                    alert('An error occured');
+                } else {
+                    if (object.error) {
+                        alert(object.error);
+                    } else {
+                        self._typeContentContainer.innerHTML = object.html;
+                        self._typeContentContainer.innerHTML.evalScripts();
+                    }
+                }
+            }
+        });
     },
     
     remove: function()
@@ -438,7 +497,8 @@ LookbookTagInput.prototype = {
         }, {
             tagListId: this._config.tagListId,
             imageId:   this._config.imageId,
-            fieldName: this._config.fieldName
+            fieldName: this._config.fieldName,
+            typeUrl:   this._config.typeUrl
         });
         this._inputElem.value = '';
         this._inputElem.focus();

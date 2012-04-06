@@ -50,7 +50,8 @@ ul#lookbookTagList {
     font: 12px arial, helvetica, sans-serif;
     position: relative;
 }
-ul#lookbookTagList li {
+ul#lookbookTagList li.entry,
+ul#lookbookTagList li.input-container {
     position: relative;
     float: left;
     padding: 2px;
@@ -67,7 +68,6 @@ ul#lookbookTagList li.entry {
     border-color: #ed6502 #a04300 #a04300 #ed6502;
     background: #ffac47 url(../images/btn_bg.gif) repeat-x 0 100%;
     color: white;
-    font-weight: bold;
     cursor: move;
 }
 ul#lookbookTagList li.entry span.remove {
@@ -81,11 +81,15 @@ ul#lookbookTagList li.entry span.remove {
 }
 ul#lookbookTagList li.entry span.name {
     margin-right: 16px;
+    font-weight: bold;
+}
+ul#lookbookTagList li.entry div.type-container {
+    width: 200px;
 }
 ul#lookbookTagList li.entry div.type-container select {
-    width: 128px;
+    width: 100%;
 }
-ul#lookbookTagList li input {
+#lookbookTagListInput {
     background: none;
     margin: 0;
     padding: 0;
@@ -95,6 +99,7 @@ ul#lookbookTagList li input {
     width: 100%;
     cursor: pointer;
 }
+ul#lookbookTagList li.entry div.product-tag-ac ul,
 #lookbookTagListAutocomplete ul {
     position: absolute;
     border-width: 1px;
@@ -105,6 +110,7 @@ ul#lookbookTagList li input {
     padding: 0;
     box-shadow: 0 1px 2px #c8c8c8;
 }
+ul#lookbookTagList li.entry div.product-tag-ac ul li,
 #lookbookTagListAutocomplete ul li {
     display: block;
     float: none;
@@ -112,11 +118,20 @@ ul#lookbookTagList li input {
     border: 1px solid white;
     margin: 0;
     cursor: pointer;
+    color: #2f2f2f;
 }
+ul#lookbookTagList li.entry div.product-tag-ac ul li:hover,
+ul#lookbookTagList li.entry div.product-tag-ac ul li.selected,
 #lookbookTagListAutocomplete ul li:hover,
 #lookbookTagListAutocomplete ul li.selected {
     color: white;
     background: #ffac47 url(../images/btn_bg.gif) repeat-x 0 100%;
     border: 1px solid;
     border-color: #ed6502 #a04300 #a04300 #ed6502;
+}
+ul#lookbookTagList li.entry div.type-container div.image-tag-product {
+    padding: 4px;
+}
+ul#lookbookTagList li.entry div.type-container div.image-tag-product .product-info {
+    margin-bottom: 4px;
 }

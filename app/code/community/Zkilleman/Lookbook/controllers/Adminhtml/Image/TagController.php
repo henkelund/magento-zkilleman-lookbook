@@ -55,4 +55,31 @@ class Zkilleman_Lookbook_Adminhtml_Image_TagController
         $this->getResponse()
                 ->setBody(sprintf('<ul>%s</ul>', implode('', $result)));
     }
+    
+    public function typeAction()
+    {
+        $response = array();
+        $helper = Mage::helper('lookbook');
+        $type = $this->getRequest()->getParam('type');
+        $typeInfo = Mage::getModel('lookbook/config')->getTypeInfo($type);
+        if ($typeInfo) {
+            $renderer = 'lookbook/adminhtml_image_tag_type_' . $typeInfo['key'];
+            if (isset($typeInfo['admin_renderer'])) {
+                $renderer = $typeInfo['admin_renderer'];
+            }
+            $block = $this->getLayout()->createBlock($renderer);
+            if (!$block) {
+                $response['error'] = sprintf(
+                        $helper->__('No such block "%s".'), $renderer);
+            } else {
+                $block->setData($this->getRequest()->getParams());
+                $response['html'] = $block->toHtml();
+            }
+        } else {
+            $response['error'] = sprintf($helper->__('Invalid type "%s".'), $type);
+        }
+        $this->getResponse()
+                ->setHeader('Content-type', 'application/json')
+                ->setBody(Mage::helper('core')->jsonEncode($response));
+    }
 }

@@ -43,11 +43,16 @@
             focusYId: 'lookbookImageFocusY',
             title:    '<?php echo $this->__('Double click to center focus'); ?>'
         });
+        <?php foreach (Mage::getModel('lookbook/config')->getTagTypes() as $type): ?>
+        LookbookTag._tagTypes.push(<?php echo Mage::helper('core')->jsonEncode(array(
+            'key' => $type['key'], 'label' => $type['label'])); ?>);
+        <?php endforeach; ?>
         new LookbookTagInput({
             tagListId:       'lookbookTagList',
             imageId:         'lookbookImage',
             fieldName:       '<?php echo $element->getName(); ?>',
-            autocompleteUrl: '<?php echo $this->getUrl('*/adminhtml_image_tag/autocomplete'); ?>'
+            autocompleteUrl: '<?php echo $this->getUrl('*/adminhtml_image_tag/autocomplete'); ?>',
+            typeUrl:         '<?php echo $this->getUrl('*/adminhtml_image_tag/type'); ?>'
         });
         <?php if ($element->getTags()): foreach ($element->getTags() as $tag): ?>
             new LookbookTag(
@@ -55,7 +60,8 @@
                 {
                     tagListId: 'lookbookTagList',
                     imageId:   'lookbookImage',
-                    fieldName: '<?php echo $element->getName(); ?>'
+                    fieldName: '<?php echo $element->getName(); ?>',
+                    typeUrl:   '<?php echo $this->getUrl('*/adminhtml_image_tag/type'); ?>'
                 }
             );
         <?php endforeach; endif; ?>

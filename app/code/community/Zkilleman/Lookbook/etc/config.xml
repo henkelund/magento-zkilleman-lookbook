@@ -105,5 +105,23 @@
                 </lookbook_tag>
             </indexer>
         </index>
+        <lookbook>
+            <image>
+                <tag>
+                    <types>
+                        <plain translate="label">
+                            <label>Plain Tag</label>
+                        </plain>
+                        <product translate="label">
+                            <label>Product</label>
+                        </product>
+                        <!--cmsblock translate="label">
+                            <label>CMS Block</label>
+                            <admin_renderer>lookbook/adminhtml_image_tag_type_cmsblock</admin_renderer>
+                        </cmsblock-->
+                    </types>
+                </tag>
+            </image>
+        </lookbook>
     </global>
 </config>
