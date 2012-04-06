@@ -53,7 +53,7 @@ LookbookCrosshair.prototype = {
     
     /**
      *
-     * @var _config Default config values
+     * @var _config Config values
      */
     _config: null,
     
@@ -158,7 +158,7 @@ LookbookTag.prototype = {
     
     /**
      *
-     * @var _config Default config values
+     * @var _config Config values
      */
     _config: null,
     
@@ -227,7 +227,6 @@ LookbookTag.prototype = {
         // Create root LI element
         this._elem = new Element('li');
         this._elem.addClassName('entry');
-        this._elem.ondblclick = this.toggleExpandCollapse.bind(this);
         // Add remove button
         var removeButton = new Element('span', {title: this._config.removeTitle});
         removeButton.addClassName('remove');
@@ -238,6 +237,7 @@ LookbookTag.prototype = {
         nameLabel.addClassName('name');
         nameLabel.insert(this._data.name
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+        nameLabel.ondblclick = this.toggleExpandCollapse.bind(this);
         this._elem.appendChild(nameLabel);
         // Add type form container
         this._typeContainer = new Element('div');
@@ -406,7 +406,7 @@ LookbookTagInput.prototype = {
     
     /**
      *
-     * @var _config Default config values
+     * @var _config Config values
      */
     _config: null,
     
@@ -440,7 +440,8 @@ LookbookTagInput.prototype = {
         containerElem.insert(this._inputElem);
         var autocompleteId = this._config.tagListId + 'Autocomplete';
         var autocomplete = new Element('div', {id: autocompleteId});
-        containerElem.insert(autocomplete);
+        autocomplete.addClassName('autocomplete');
+        $$('body')[0].insert(autocomplete);
         this._listElem.insert(containerElem);
         new Ajax.Autocompleter(
             inputId, autocompleteId,
@@ -452,18 +453,19 @@ LookbookTagInput.prototype = {
         );
     },
     
+    clear: function() {
+        this._inputElem.value = '';
+        this._inputElem.setAttribute('size', 1);
+    },
+    
     keyReleased: function(event)
     {
         var text = this._inputElem.value.replace(/^\s+/, ''); // ltrim
         if (text.length == 0) {
-            this._inputElem.value = '';
+            this.clear();
             return;
         }
         switch (event.keyCode) {
-            case Event.KEY_DOWN:
-            case Event.KEY_UP:
-                // ...
-                break;
             case Event.KEY_RETURN:
                 this.createTag();
                 break;
@@ -500,7 +502,7 @@ LookbookTagInput.prototype = {
             fieldName: this._config.fieldName,
             typeUrl:   this._config.typeUrl
         });
-        this._inputElem.value = '';
+        this.clear();
         this._inputElem.focus();
     }
 };

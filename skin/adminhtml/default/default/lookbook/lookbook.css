@@ -99,35 +99,20 @@ ul#lookbookTagList li.entry div.type-container select {
     width: 100%;
     cursor: pointer;
 }
-ul#lookbookTagList li.entry div.product-tag-ac ul,
+.entry-edit .fieldset div.autocomplete ul li {
+    margin: 0;
+}
+#lookbookTagListAutocomplete {
+    border: 0 none;
+}
 #lookbookTagListAutocomplete ul {
     position: absolute;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
+    border: 1px solid #888;
     background: white;
-    font: 12px arial, helvetica, sans-serif;
-    padding: 0;
-    box-shadow: 0 1px 2px #c8c8c8;
 }
-ul#lookbookTagList li.entry div.product-tag-ac ul li,
 #lookbookTagListAutocomplete ul li {
-    display: block;
-    float: none;
     white-space: nowrap;
-    border: 1px solid white;
-    margin: 0;
-    cursor: pointer;
-    color: #2f2f2f;
-}
-ul#lookbookTagList li.entry div.product-tag-ac ul li:hover,
-ul#lookbookTagList li.entry div.product-tag-ac ul li.selected,
-#lookbookTagListAutocomplete ul li:hover,
-#lookbookTagListAutocomplete ul li.selected {
-    color: white;
-    background: #ffac47 url(../images/btn_bg.gif) repeat-x 0 100%;
-    border: 1px solid;
-    border-color: #ed6502 #a04300 #a04300 #ed6502;
+    min-height: 0;
 }
 ul#lookbookTagList li.entry div.type-container div.image-tag-product {
     padding: 4px;

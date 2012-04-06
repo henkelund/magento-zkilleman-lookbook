@@ -52,7 +52,7 @@
         class="input-text"
         value="<?php echo $st; ?>"
         onfocus="if (this.value == '<?php echo $st; ?>') this.value='';"
-        onblur="if (this.value == '') this.value='<?php echo $st; ?>';"
+        onblur="this.value='<?php echo $st; ?>';"
         />
     <div class="autocomplete" id="<?php echo $this->getFieldId(); ?>AC"></div>
 </div>
