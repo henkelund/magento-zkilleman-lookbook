@@ -112,11 +112,7 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Grid
         if ($isExport) {
             return $renderedValue;
         } else {
-            return $row->getHtml(
-                    self::THUMB_WIDTH,
-                    self::THUMB_HEIGHT,
-                    array(),
-                    array('margin' => '0 auto'));
+            return $row->getHtml(self::THUMB_WIDTH, self::THUMB_HEIGHT);
         }
     }
 }

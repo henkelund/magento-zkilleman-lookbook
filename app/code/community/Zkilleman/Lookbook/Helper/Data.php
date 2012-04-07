@@ -39,7 +39,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
     
     public function getMediaBaseUrl()
     {
-        return Mage::getBaseUrl('media') . DS . self::ORIGINAL_PATH;
+        return Mage::getBaseUrl('media') . self::ORIGINAL_PATH;
     }
     
     public function getCachedMediaBaseDir()
@@ -49,7 +49,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
     
     public function getCachedMediaBaseUrl()
     {
-        return Mage::getBaseUrl('media') . DS . self::CACHE_PATH;
+        return Mage::getBaseUrl('media') . self::CACHE_PATH;
     }
     
     public function removeImageFile(Zkilleman_Lookbook_Model_Image $image)

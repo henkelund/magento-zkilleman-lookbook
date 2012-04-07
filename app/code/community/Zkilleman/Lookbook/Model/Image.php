@@ -69,7 +69,7 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         return !$this->isLandscape();
     }
     
-    public function getUrl($width = null, $height = null)
+    public function getUrl($width = null, $height = null, $crop = false)
     {
         $original = $this->createImageObject();
         if (!$original) {
@@ -80,17 +80,42 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         if ($width && $height) {
             $ratio = $height/$width;
             if ($ratio > $this->getRatio()) {
+                if ($crop) {
+                    $fullWidth = round(($height/$original->getOriginalHeight()) *
+                                    $original->getOriginalWidth());
+                    $widthToCrop = $fullWidth - $width;
+                    $leftCrop = round($widthToCrop * $this->getFocusX());
+                    $crop = array(0, $leftCrop, $widthToCrop - $leftCrop, 0);
+                }
                 $width = null;
             } else {
+                if ($crop) {
+                    $fullHeight = round(($width/$original->getOriginalWidth()) *
+                                    $original->getOriginalHeight());
+                    $heightToCrop = $fullHeight - $height;
+                    $topCrop = round($heightToCrop * $this->getFocusY());
+                    $crop = array($topCrop, 0, 0, $heightToCrop - $topCrop);
+                }
                 $height = null;
             }
+        } else {
+            // Can't crop if not both width & height specified
+            $crop = false;
         }
-        $fileName = 
-                DS . ($width ? ('w' . $width) : ('h' . $height)) . $this->getFile();
+        $fileName = DS .
+                ($width ? 'w' . $width : 'h' . $height) .
+                (is_array($crop) ? ('t' . $crop[0] .
+                                    'l' . $crop[1] .
+                                    'r' . $crop[2] .
+                                    'b' . $crop[3]) : '') .
+                $this->getFile();
         
         if (!file_exists($this->_helper->getCachedMediaBaseDir() . $fileName)) {
             $original->keepTransparency(true);
             $original->resize($width, $height);
+            if (is_array($crop)) {
+                call_user_func_array(array($original, 'crop'), $crop);
+            }
             $original->save($this->_helper->getCachedMediaBaseDir() . $fileName);
         }
         
@@ -103,27 +128,63 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
                             $attributes      = array(),
                             $styleAttributes = array())
     {
-        $styleAttributes = array_merge(array(
-            'width'               => $width . 'px',
-            'height'              => $height . 'px',
-            'background-image'    => sprintf(
-                    'url(\'%s\')', $this->getUrl($width, $height)),
-            'background-position' => sprintf(
-                    '%d%% %d%%', $this->getFocusX() * 100, $this->getFocusY() * 100)
-        ), $styleAttributes);
+        $tag = 'img';
+        $content = '';
+        if (!is_array($attributes)) {
+            $attributes = array();
+        }
+        if (!is_array($styleAttributes)) {
+            $styleAttributes = array();
+        }
+        if (isset($attributes['_tag'])) {
+            $tag = strtolower($attributes['_tag']);
+            unset($attributes['_tag']);
+        }
+        if (isset($attributes['_content'])) {
+            $content = $attributes['_content'];
+            unset($attributes['_content']);
+        }
+        $defaultStyleAttributes = array();
+        if ($tag == 'img') {
+            if ($width && !isset($attributes['width'])) {
+                $attributes['width'] = round($width);
+            }
+            if ($height && !isset($attributes['height'])) {
+                $attributes['height'] = round($height);
+            }
+            $attributes['src'] = $this->getUrl($width, $height, true);
+        } else {
+            if ($width) {
+                $defaultStyleAttributes['width'] = round($width) . 'px';
+            }
+            if ($height) {
+                $defaultStyleAttributes['height'] = round($height) . 'px';
+            }
+            $defaultStyleAttributes['background-image'] = 
+                                        sprintf('url(\'%s\')', 
+                                                $this->getUrl($width, $height));
+            $defaultStyleAttributes['background-position'] =
+                                        sprintf('%d%% %d%%',
+                                                $this->getFocusX() * 100,
+                                                $this->getFocusY() * 100);
+        }
+        $styleAttributes = array_merge($defaultStyleAttributes, $styleAttributes);
         $styleAttributePairs = array();
         foreach ($styleAttributes as $key => $value) {
             if ($value) {
                 $styleAttributePairs[] = sprintf('%s: %s;', $key, $value);
             }
         }
-        $attributes['style'] = implode(' ', $styleAttributePairs);
+        if (!empty($styleAttributePairs)) {
+            $attributes['style'] = implode(' ', $styleAttributePairs);
+        }
         $attributeString = '';
         foreach ($attributes as $key => $value) {
             $attributeString .= sprintf(' %s="%s"', $key, $value);
         }
-        
-        return sprintf('<div%s></div>', $attributeString);
+        $tagstring = ($tag == 'img') ? '<img%s />' :
+                        sprintf('<%s%%s>%s</%s>', $tag, $content, $tag);
+        return sprintf($tagstring, $attributeString);
     }
     
     public function getTags()
