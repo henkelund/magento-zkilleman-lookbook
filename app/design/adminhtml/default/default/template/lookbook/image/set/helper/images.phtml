@@ -1,0 +1,111 @@
+<?php
+/**
+ * Zkilleman_Lookbook
+ *
+ * Copyright (C) 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Lookbook.
+ *
+ * Zkilleman_Lookbook is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Lookbook is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Zkilleman_Lookbook. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @category Zkilleman
+ * @package Zkilleman_Lookbook
+ * @author Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license http://www.gnu.org/licenses/gpl.html GNU GPL
+ * @link https://github.com/henkelund/magento-zkilleman-lookbook
+ */
+?>
+<?php
+/**
+ *
+ * @var Zkilleman_Lookbook_Block_Adminhtml_Image_Set_Helper_Images 
+ */
+$element    = $this->getElement();
+$candidates = Mage::getModel('lookbook/image')->getCollection();
+?>
+<input
+    id="<?php echo $element->getHtmlId(); ?>"
+    type="hidden"
+    name="<?php echo $element->getName(); ?>"
+    value="<?php echo $element->getValue(); ?>" />
+<ul id="setMemberImages"></ul>
+<ul id="setCandidateImages"></ul>
+<script type="text/javascript">
+//<![CDATA[
+    (function() {
+    
+        function refershMemberIds()
+        {
+            var ids = [];
+            $$('#setMemberImages li').each(function(elem) {
+                ids.push(parseInt(elem.getAttribute('rel')));
+            });
+            $('<?php echo $element->getHtmlId(); ?>').value = ids.join(',');
+        }
+        
+        function createImageElement(id, src, title)
+        {
+            var htmlId = 'image_' + id;
+            if ($(htmlId)) {
+                if (src) {
+                    $(htmlId + '_img').setAttribute('src', src);
+                    $(htmlId + '_img').setAttribute('title', title);
+                }
+            } else {
+                var candidate = new Element('li', {id: htmlId});
+                candidate.setAttribute('rel', id);
+                var image = new Element('img', {id: htmlId + '_img'});
+                candidate.insert(image);
+                if (typeof src != 'undefined') {
+                    image.setAttribute('src', src);
+                    image.setAttribute('title', title);
+                    $('setCandidateImages').insert(candidate);
+                } else {
+                    $('setMemberImages').insert(candidate);
+                }
+            }
+        }
+
+        document.observe('dom:loaded', function() {
+            var memberIds = $('<?php echo $element->getHtmlId(); ?>').value.split(',');
+            memberIds.each(function(id) {
+                id = parseInt(id);
+                if (id > 0) {
+                    createImageElement(id);
+                }
+            });
+            <?php foreach ($candidates as $candidate): ?>
+            createImageElement(
+                <?php echo $candidate->getId() ?>,
+                '<?php echo $candidate->getUrl(270, 100, true); ?>',
+                '<?php echo addslashes($candidate->getTitle()); ?>'
+            );
+            <?php endforeach; ?>
+
+            var containers = ['setMemberImages', 'setCandidateImages'];
+            containers.each(function(id) {
+                Sortable.create(id, {
+                    constraint: false,
+                    dropOnEmpty: true,
+                    containment: containers,
+                    hoverclass: 'hover',
+                    onUpdate: refershMemberIds
+                });
+            });
+        });
+    
+    })();
+//]]>
+</script>

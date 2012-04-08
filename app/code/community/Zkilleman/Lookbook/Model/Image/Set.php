@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Zkilleman_Lookbook
  *
@@ -27,28 +26,22 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
--->
-<config>
-    <menu>
-        <cms>
-            <children>
-                <lookbook translate="title" module="lookbook">
-                    <title>Zkilleman Lookbook</title>
-                    <sort_order>100</sort_order>
-                    <children>
-                        <images translate="title" module="lookbook">
-                            <title>Images</title>
-                            <action>lookbook/adminhtml_image</action>
-                            <sort_order>10</sort_order>
-                        </images>
-                        <sets translate="title" module="lookbook">
-                            <title>Sets</title>
-                            <action>lookbook/adminhtml_image_set</action>
-                            <sort_order>20</sort_order>
-                        </sets>
-                    </children>
-                </lookbook>
-            </children>
-        </cms>
-    </menu>
-</config>
+
+class Zkilleman_Lookbook_Model_Image_Set extends Mage_Core_Model_Abstract
+{
+    protected function _construct()
+    {
+        $this->_init('lookbook/image_set');
+    }
+    
+    public function getImageIds()
+    {
+        return $this->getResource()->getImageIds($this);
+    }
+    
+    public function setImageIds(array $ids = array())
+    {
+        $this->getResource()->setImageIds($this, $ids);
+        return $this;
+    }
+}

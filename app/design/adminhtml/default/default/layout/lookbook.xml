@@ -49,4 +49,25 @@
             <block type="lookbook/adminhtml_image_edit" name="lookbook.image.edit"></block>
         </reference>
     </lookbook_adminhtml_image_edit>
+    
+    <lookbook_adminhtml_image_set_index>
+        <reference name="content">
+            <block type="lookbook/adminhtml_image_set" name="lookbook.image_set"></block>
+        </reference>
+    </lookbook_adminhtml_image_set_index>
+
+    <lookbook_adminhtml_image_set_new>
+        <update handle="lookbook_adminhtml_image_set_edit" />
+    </lookbook_adminhtml_image_set_new>
+
+    <lookbook_adminhtml_image_set_edit>
+        <update handle="editor"/>
+        <reference name="head">
+            <action method="addCss"><stylesheet>lookbook/lookbook.css</stylesheet></action>
+            <action method="addItem"><type>skin_js</type><name>lookbook/lookbook.js</name><params/></action>
+        </reference>
+        <reference name="content">
+            <block type="lookbook/adminhtml_image_set_edit" name="lookbook.image_set.edit"></block>
+        </reference>
+    </lookbook_adminhtml_image_set_edit>
 </layout>

@@ -120,3 +120,31 @@ ul#lookbookTagList li.entry div.type-container div.image-tag-product {
 ul#lookbookTagList li.entry div.type-container div.image-tag-product .product-info {
     margin-bottom: 4px;
 }
+ul#setMemberImages,
+ul#setCandidateImages {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
+    background: white;
+    padding: 4px;
+    width: 270px;
+    min-height: 102px;
+    float: left;
+    margin-right: 10px;
+}
+ul#setMemberImages {
+    background-color: #eff5ea;
+}
+ul#setCandidateImages {
+    background-color: #faebe7;
+}
+ul#setMemberImages.hover,
+ul#setCandidateImages.hover {
+    background-color: #fdfaa4;
+}
+ul#setMemberImages li,
+ul#setCandidateImages li {
+    margin: 0;
+    line-height: 1em;
+    cursor: move;
+}

@@ -88,6 +88,12 @@
                     <image_tag_indexer_tmp>
                         <table>lookbook_image_tag_index_tmp</table>
                     </image_tag_indexer_tmp>
+                    <image_set>
+                        <table>lookbook_image_set</table>
+                    </image_set>
+                    <image_set_image>
+                        <table>lookbook_image_set_image</table>
+                    </image_set_image>
                 </entities>
             </lookbook_resource>
         </models>

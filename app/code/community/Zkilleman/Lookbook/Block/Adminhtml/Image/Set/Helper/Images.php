@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Zkilleman_Lookbook
  *
@@ -27,28 +26,29 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
--->
-<config>
-    <menu>
-        <cms>
-            <children>
-                <lookbook translate="title" module="lookbook">
-                    <title>Zkilleman Lookbook</title>
-                    <sort_order>100</sort_order>
-                    <children>
-                        <images translate="title" module="lookbook">
-                            <title>Images</title>
-                            <action>lookbook/adminhtml_image</action>
-                            <sort_order>10</sort_order>
-                        </images>
-                        <sets translate="title" module="lookbook">
-                            <title>Sets</title>
-                            <action>lookbook/adminhtml_image_set</action>
-                            <sort_order>20</sort_order>
-                        </sets>
-                    </children>
-                </lookbook>
-            </children>
-        </cms>
-    </menu>
-</config>
+
+class Zkilleman_Lookbook_Block_Adminhtml_Image_Set_Helper_Images
+        extends Varien_Data_Form_Element_Abstract
+{
+    /**
+     *
+     * @var string Template file 
+     */
+    protected $_template;
+    
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->_template = 'lookbook/image/set/helper/images.phtml';
+    }
+    
+    public function getElementHtml()
+    {
+        return Mage::app()
+                ->getLayout()
+                ->createBlock('adminhtml/template')
+                ->setTemplate($this->_template)
+                ->setElement($this)
+                ->toHtml();
+    }
+}
