@@ -51,6 +51,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                 $this->_imageCollection = 
                             Mage::getModel('lookbook/image')
                                     ->getCollection()
+                                    ->addFieldToFilter('is_active', 1)
                                     ->setOrder('main_table.created_at');
             }
             if ($tags = $this->getTags()) {

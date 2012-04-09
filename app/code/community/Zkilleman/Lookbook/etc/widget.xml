@@ -33,18 +33,34 @@
         <name>Zkilleman Lookbook Slideshow</name>
         <description type="desc">Slide show for lookbook images</description>
         <parameters>
-            <set_handle translate="label comment">
+            <set_handle translate="label">
                 <required>0</required>
                 <visible>1</visible>
                 <label>Set handle</label>
                 <type>text</type>
             </set_handle>
-            <tags translate="label comment">
+            <tags translate="label">
                 <required>0</required>
                 <visible>1</visible>
                 <label>Tags</label>
                 <type>text</type>
             </tags>
+            <direction translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Direction</label>
+                <type>select</type>
+                <values>
+                    <right translate="label">
+                        <value>right</value>
+                        <label>Right</label>
+                    </right>
+                    <left translate="label">
+                        <value>left</value>
+                        <label>Left</label>
+                    </left>
+                </values>
+            </direction>
         </parameters>
     </lookbook_slideshow>
 </widgets>

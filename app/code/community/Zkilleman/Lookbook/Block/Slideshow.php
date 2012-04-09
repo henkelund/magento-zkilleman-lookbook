@@ -31,4 +31,12 @@ class Zkilleman_Lookbook_Block_Slideshow
     extends Zkilleman_Lookbook_Block_Widget_Abstract
 {
     protected $_template = 'lookbook/slideshow.phtml';
+    
+    protected static $_instanceCount = 0;
+    
+    protected function _construct()
+    {
+        $this->setHtmlId('slideshow_' . self::$_instanceCount++);
+        parent::_construct();
+    }
 }
