@@ -74,6 +74,8 @@ $table = $installer->getConnection()
         'nullable'  => false,
         'default'   => '0'
         ), 'Is Active')
+    ->addIndex($installer->getIdxName('lookbook/image', array('created_at')),
+        array('created_at'))
     ->addIndex($installer->getIdxName('lookbook/image', array('is_active')),
         array('is_active'))
     ->setComment('Lookbook Image Table');
@@ -118,6 +120,8 @@ $table = $installer->getConnection()
         ), 'Reference')
     ->addIndex($installer->getIdxName('lookbook/image_tag', array('image_id')),
         array('image_id'))
+    ->addIndex($installer->getIdxName('lookbook/image_tag', array('name')),
+        array('name'))
     ->addIndex($installer->getIdxName('lookbook/image_tag', array('type')),
         array('type'))
     ->addIndex($installer->getIdxName('lookbook/image_tag', array('reference')),

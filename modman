@@ -2,4 +2,7 @@ app/etc/modules/*                                      app/etc/modules/
 app/code/community/Zkilleman/Lookbook                  app/code/community/Zkilleman/Lookbook
 app/design/adminhtml/default/default/layout/*          app/design/adminhtml/default/default/layout/
 app/design/adminhtml/default/default/template/lookbook app/design/adminhtml/default/default/template/lookbook
+app/design/frontend/base/default/template/lookbook     app/design/frontend/base/default/template/lookbook
+app/design/frontend/base/default/layout/*              app/design/frontend/base/default/layout/
 skin/adminhtml/default/default/lookbook                skin/adminhtml/default/default/lookbook
+skin/frontend/base/default/css/*                       skin/frontend/base/default/css/

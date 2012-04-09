@@ -47,6 +47,16 @@
         </routers>
     </admin>
 
+    <frontend>
+        <layout>
+            <updates>
+                <lookbook>
+                    <file>lookbook.xml</file>
+                </lookbook>
+            </updates>
+        </layout>
+    </frontend>
+
     <adminhtml>
         <layout>
             <updates>

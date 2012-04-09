@@ -1,0 +1,126 @@
+<?php
+/**
+ * Zkilleman_Lookbook
+ *
+ * Copyright (C) 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Lookbook.
+ *
+ * Zkilleman_Lookbook is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Lookbook is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Zkilleman_Lookbook. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @category Zkilleman
+ * @package Zkilleman_Lookbook
+ * @author Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license http://www.gnu.org/licenses/gpl.html GNU GPL
+ * @link https://github.com/henkelund/magento-zkilleman-lookbook
+ */
+?>
+<?php
+    $images      = $this->getImageCollection();
+    $canvasWidth = 900; //@todo get options from widget setup
+    $imageWidth  = $canvasWidth*0.75;
+?>
+<h1>Lookz</h1>
+<div class="slideshow-wrapper">
+    <ul id="slideshow" class="slideshow">
+    <?php foreach ($images as $image): ?>
+        <li><?php echo $image->getHtml($imageWidth, 256); ?></li>
+    <?php endforeach; ?>
+    </ul>
+</div>
+<script type="text/javascript">
+    
+    Element.addMethods({
+        bounds: function(element) {
+            element = $(element);
+            var elemPos = element.cumulativeOffset();
+            var elemDim = element.getDimensions();
+            return {
+                top:    elemPos.top,
+                left:   elemPos.left,
+                width:  elemDim.width,
+                height: elemDim.height
+            };
+        }
+    });
+    
+    var LookbookSlideshow = Class.create();
+    LookbookSlideshow.prototype = {
+        _elem:    null,
+        _items:   null,
+        _current: 0,
+        initialize: function(id) {
+            if (!(this._elem = $(id))) {
+                return;
+            }
+            this._items = this._elem.select('li');
+            if (!this._items.length) {
+                return;
+            }
+            this._initFakes(2);
+            this.slide('right', 0);
+            var intervalFunction =  this.slide.bind(this);
+            setInterval(function() {intervalFunction('right');}, 4000);
+        },
+        _initFakes: function(num) {
+            var fake, numItems = this._items.length;
+            for (var i = 0; i < num; ++i) {
+                fake = new Element('li')
+                            .addClassName('fake')
+                            .update(this._items[((numItems - 1) - i)%numItems].innerHTML);
+                this._elem.insert({top: fake});
+                fake = new Element('li')
+                            .addClassName('fake')
+                            .update(this._items[i%numItems].innerHTML);
+                this._elem.insert({bottom: fake});
+            }
+        },
+        _targetOffset: function(item) {
+            var iBounds = item.bounds();
+            var iCenter = iBounds.left + (iBounds.width/2);
+            var eBounds = this._elem.bounds();
+            var eCenter = eBounds.left + (eBounds.width/2);
+            return parseInt(eCenter - iCenter);
+        },
+        slide: function(direction, duration) {
+            if (typeof direction == 'undefined' || direction != 'left') {
+                direction = 'right';
+            }
+            if (typeof duration == 'undefined') {
+                duration = 0.5;
+            }
+            var numItems = this._items.length;
+            if (this._current != this._current%numItems) { // on a fake
+                this._current = this._current%numItems;
+                var realItem = this._items[this._current];
+                this._elem.style.left = this._targetOffset(realItem) + 'px';
+            }
+            var item;
+            if (direction == 'right') {
+                item = this._items[this._current++].next('li');
+            } else {
+                item = this._items[this._current--].prevoius('li');
+            }
+            var offset = this._targetOffset(item);
+            new Effect.Move(this._elem, {
+                            x: offset,
+                            duration: duration,
+                            mode: 'absolute'});
+        }
+    };
+    
+    new LookbookSlideshow('slideshow');
+    
+</script>

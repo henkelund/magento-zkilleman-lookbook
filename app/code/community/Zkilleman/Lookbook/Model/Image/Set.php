@@ -34,6 +34,28 @@ class Zkilleman_Lookbook_Model_Image_Set extends Mage_Core_Model_Abstract
         $this->_init('lookbook/image_set');
     }
     
+    public function loadByHandle($handle)
+    {
+        $this->load($handle, 'handle');
+        return $this;
+    }
+    
+    public function getImageCollection()
+    {
+        $images = Mage::getModel('lookbook/image')->getCollection();
+        $si     = $this->getResource()->getTable('lookbook/image_set_image');
+        $images->getSelect()
+                ->joinInner(
+                    array('si' => $si),
+                    'main_table.image_id = si.image_id',
+                    array()
+                )
+                ->where('main_table.is_active = 1')
+                ->where('si.set_id = ?', $this->getId())
+                ->order('si.order ASC');
+        return $images;
+    }
+    
     public function getImageIds()
     {
         return $this->getResource()->getImageIds($this);
