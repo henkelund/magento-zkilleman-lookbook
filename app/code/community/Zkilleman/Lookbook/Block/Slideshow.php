@@ -32,11 +32,77 @@ class Zkilleman_Lookbook_Block_Slideshow
 {
     protected $_template = 'lookbook/slideshow.phtml';
     
+    /**
+     * Arbitrary min height value
+     *
+     * @var int 
+     */
+    protected $_minHeight = 64;
+    
+    /**
+     * Arbitrary max height value
+     *
+     * @var int 
+     */
+    protected $_maxHeight = 4096;
+    
+    /**
+     * Approximation of the golden ratio
+     *
+     * @var int 
+     */
+    protected $_defaultHeight = '610:377';
+    
+    /**
+     * Minimum interval in seconds
+     *
+     * @var float 
+     */
+    protected $_minInterval = 0.5;
+    
+    /**
+     * Default interval in seconds
+     *
+     * @var float 
+     */
+    protected $_defaultInterval = 5.0;
+    
     protected static $_instanceCount = 0;
     
     protected function _construct()
     {
         $this->setHtmlId('slideshow_' . self::$_instanceCount++);
         parent::_construct();
+    }
+    
+    public function getHeight()
+    {
+        $height = $this->hasData('height') ?
+                        $this->getData('height') : $this->_defaultHeight;
+        
+        if (is_numeric($height)) {
+            $height = intval($height);
+        } else {
+            $matches = array();
+            if (preg_match('/^(\d+(\.\d+)?):(\d+(\.\d+)?)$/', $height, $matches)) {
+                $w = floatval($matches[1]);
+                $h = floatval($matches[3]);
+                if ($w > 0 && $h > 0) {
+                    $height = $this->getWidth()*($h/$w);
+                } else {
+                    $height = 0;
+                }
+            } else {
+                $height = 0;
+            }
+        }
+        return (int) min($this->_maxHeight, max($this->_minHeight, $height));
+    }
+    
+    public function getInterval()
+    {
+        $interval = $this->hasData('interval') ?
+                        $this->getData('interval') : $this->_defaultInterval;
+        return max(floatval($interval), $this->_minInterval)*1000;
     }
 }

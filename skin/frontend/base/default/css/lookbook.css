@@ -25,7 +25,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
- 
+
 div.slideshow-wrapper {
     position: relative;
     overflow: hidden;
@@ -35,31 +35,90 @@ ul.slideshow {
     white-space: nowrap;
 }
 ul.slideshow li {
+    border: 1px solid #0a263d;
     display: inline-block;
     position: relative;
     margin: 0 5px;
+    overflow: hidden;
 }
 ul.slideshow li div.overlay {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background: rgba(0,0,0,0.75);
+    min-height: 16px;
+    padding-top: 6px;
+    background: rgba(10,38,60,0.9);
     color: white;
-    border-top: 1px solid rgba(0,0,0,0.5);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset;
-}
-ul.slideshow li div.overlay span {
+    border-top: 1px solid #0a263d;
+    box-shadow: 0 1px 0 #415966 inset;
     font-size: 1em;
-    line-height: 2em;
-    vertical-align: bottom;
+    line-height: 1em;
+    margin: 0;
 }
-ul.slideshow li div.overlay span.title {
-    float: left;
-    margin-left: 10px;
-    font-weight: bold;
-}
-ul.slideshow li div.overlay span.caption {
+ul.slideshow li div.overlay div.tags {
     float: right;
     margin-right: 10px;
+    font-size: 0.8em;
+    line-height: 1em;
+}
+ul.slideshow li div.overlay div.tags span.tag {
+    color: #ebbc58;
+}
+ul.slideshow li div.overlay span.title {
+    margin-left: 10px;
+    color: #a7c6dd;
+    font-weight: bold;
+}
+ul.slideshow li div.overlay p.caption {
+    margin: 2px 10px;
     font-style: italic;
+    white-space: normal;
+}
+div.slideshow-wrapper button {
+    position: absolute;
+    background: #0a263c;
+    color: #ebbc58;
+    border: 1px solid #0a263d;
+    box-shadow: 0 1px 0 #415966 inset;
+    cursor: pointer;
+    width: 30px;
+    line-height: 30px;
+    font-size: 30px;
+    font-weight: bold;
+    z-index: 999;
+    bottom: 50%;
+    margin-bottom: -32px;
+    padding: 14px 0 18px 0;
+    text-align: center;
+    vertical-align: middle;
+}
+div.slideshow-wrapper button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+div.slideshow-wrapper button.next {
+    right: 0;
+    border-right: 0;
+    border-radius: 32px 0 0 32px;
+}
+div.slideshow-wrapper button.previous {
+    left: 0;
+    border-left: 0;
+    border-radius: 0 32px 32px 0;
+}
+div.positioned-tag {
+    position: absolute;
+    background: #0a263c;
+    color: #ebbc58;
+    border: 1px solid #0a263d;
+    border-radius: 5px;
+    box-shadow: 0 1px 0 #415966 inset;
+    padding: 0 4px;
+    cursor: pointer;
+}
+div.positioned-tag.plain {
+    cursor: default;
+}
+div.positioned-tag:hover {
+    z-index: 999;
 }

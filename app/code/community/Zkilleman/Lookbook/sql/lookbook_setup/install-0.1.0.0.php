@@ -122,6 +122,10 @@ $table = $installer->getConnection()
         array('image_id'))
     ->addIndex($installer->getIdxName('lookbook/image_tag', array('name')),
         array('name'))
+    ->addIndex($installer->getIdxName('lookbook/image_tag', array('x')),
+        array('x'))
+    ->addIndex($installer->getIdxName('lookbook/image_tag', array('y')),
+        array('y'))
     ->addIndex($installer->getIdxName('lookbook/image_tag', array('type')),
         array('type'))
     ->addIndex($installer->getIdxName('lookbook/image_tag', array('reference')),

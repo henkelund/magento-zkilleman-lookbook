@@ -69,10 +69,16 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         return !$this->isLandscape();
     }
     
-    public function getUrl($width = null, $height = null, $crop = false)
+    public function getUrl(
+                            $width   = null,
+                            $height  = null,
+                            $crop    = false,
+                            &$bounds = null)
     {
+        $bounds = array(0, 0, 1, 1); // top, left, right, bottom
         $original = $this->createImageObject();
         if (!$original) {
+            $bounds = array(0, 0, 0, 0);
             return false;
         } else if (!$width && !$height) {
             return $this->_helper->getMediaBaseUrl() . DS . $this->getFile();
@@ -86,6 +92,8 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
                     $widthToCrop = $fullWidth - $width;
                     $leftCrop = round($widthToCrop * $this->getFocusX());
                     $crop = array(0, $leftCrop, $widthToCrop - $leftCrop, 0);
+                    $bounds[1] = number_format($crop[1]/$fullWidth, 4);
+                    $bounds[2] = number_format(1.0 - $crop[2]/$fullWidth, 4);
                 }
                 $width = null;
             } else {
@@ -95,6 +103,8 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
                     $heightToCrop = $fullHeight - $height;
                     $topCrop = round($heightToCrop * $this->getFocusY());
                     $crop = array($topCrop, 0, 0, $heightToCrop - $topCrop);
+                    $bounds[0] = number_format($crop[0]/$fullHeight, 4);
+                    $bounds[3] = number_format(1.0 - $crop[3]/$fullHeight, 4);
                 }
                 $height = null;
             }
@@ -126,7 +136,8 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
                             $width           = null,
                             $height          = null,
                             $attributes      = array(),
-                            $styleAttributes = array())
+                            $styleAttributes = array(),
+                            &$bounds         = null)
     {
         $tag = 'img';
         $content = '';
@@ -152,7 +163,7 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
             if ($height && !isset($attributes['height'])) {
                 $attributes['height'] = round($height);
             }
-            $attributes['src'] = $this->getUrl($width, $height, true);
+            $attributes['src'] = $this->getUrl($width, $height, true, $bounds);
         } else {
             if ($width) {
                 $defaultStyleAttributes['width'] = round($width) . 'px';
@@ -161,12 +172,12 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
                 $defaultStyleAttributes['height'] = round($height) . 'px';
             }
             $defaultStyleAttributes['background-image'] = 
-                                        sprintf('url(\'%s\')', 
-                                                $this->getUrl($width, $height));
+                            sprintf('url(\'%s\')', 
+                                    $this->getUrl($width, $height, false, $bounds));
             $defaultStyleAttributes['background-position'] =
-                                        sprintf('%d%% %d%%',
-                                                $this->getFocusX() * 100,
-                                                $this->getFocusY() * 100);
+                            sprintf('%d%% %d%%',
+                                    $this->getFocusX() * 100,
+                                    $this->getFocusY() * 100);
         }
         $styleAttributes = array_merge($defaultStyleAttributes, $styleAttributes);
         $styleAttributePairs = array();
@@ -187,12 +198,19 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         return sprintf($tagstring, $attributeString);
     }
     
-    public function getTags()
+    public function getTags(array $bounds = array())
     {
         if (!$this->getId()) {
             return null;
         }
-        return Mage::getModel('lookbook/image_tag')->getCollection()
+        $tags = Mage::getModel('lookbook/image_tag')->getCollection()
                 ->addFieldToFilter('image_id', $this->getId());
+        if (count($bounds) == 4) {
+            $tags->addFieldToFilter('y', array('gteq' => $bounds[0]))
+                 ->addFieldToFilter('x', array('gteq' => $bounds[1]))
+                 ->addFieldToFilter('x', array('lteq' => $bounds[2]))
+                 ->addFieldToFilter('y', array('lteq' => $bounds[3]));
+        }
+        return $tags;
     }
 }

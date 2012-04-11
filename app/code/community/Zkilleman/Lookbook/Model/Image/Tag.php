@@ -71,6 +71,38 @@ class Zkilleman_Lookbook_Model_Image_Tag extends Mage_Core_Model_Abstract
         return $this->_typeInstance;
     }
     
+    public function isInBounds(array $bounds)
+    {
+        if (!$this->getId() || count($bounds) != 4) {
+            return false;
+        } else {
+            return $this->getY() >= $bounds[0] &&
+                   $this->getX() >= $bounds[1] &&
+                   $this->getX() <= $bounds[2] &&
+                   $this->getY() <= $bounds[3];
+        }
+    }
+    
+    public function getRelativeX(array $bounds)
+    {
+        if (!$this->isInBounds($bounds)) {
+            return -1;
+        } else {
+            $scale = 1.0/($bounds[2] - $bounds[1]);
+            return number_format($this->getX()*$scale - $bounds[1]*$scale, 4);
+        }
+    }
+    
+    public function getRelativeY(array $bounds)
+    {
+        if (!$this->isInBounds($bounds)) {
+            return -1;
+        } else {
+            $scale = 1.0/($bounds[3] - $bounds[0]);
+            return number_format($this->getY()*$scale - $bounds[0]*$scale, 4);
+        }
+    }
+    
     public function afterCommitCallback()
     {
         parent::afterCommitCallback();

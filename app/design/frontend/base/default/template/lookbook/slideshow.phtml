@@ -29,21 +29,63 @@
 ?>
 <?php
     $images      = $this->getImageCollection();
-    $canvasWidth = 900; //@todo get options from widget setup
-    $imageWidth  = $canvasWidth*0.75;
+    $imageWidth  = $this->getWidth();
+    $imageHeight = $this->getHeight();
 ?>
 <div class="slideshow-wrapper">
-    <ul id="<?php echo $this->getHtmlId(); ?>" class="slideshow">
+    <ul id="<?php echo $this->getHtmlId(); ?>" class="slideshow"><!--
     <?php foreach ($images as $image): ?>
-        <li>
-            <?php echo $image->getHtml($imageWidth, 256); ?>
+     --><li class="image" data-id="<?php echo $image->getId(); ?>">
+            <?php
+                $bounds = array();
+                $imgHtml = $image->getHtml(
+                                $imageWidth,  // width
+                                $imageHeight, // height
+                                null,         // element attributes
+                                null,         // style attributes
+                                $bounds);     // post crop bounds relative 
+                                              // to original aspect ratio
+                $tagNames = array();
+                $positionedTags = array();
+                // Loading a collection within a loop is never ideal
+                // Solution proposals:
+                //   * Rely on block cache
+                //   * Store serialized tag data on image table
+                //   * Custom tag cache
+                //   * Load tags with Ajax
+                foreach ($image->getTags() as $tag) {
+                    if ($tag->isInBounds($bounds)) {
+                        $positionedTags[] = $tag;
+                    }
+                    $tagNames[] = $tag->getName();
+                }
+            ?>
+         <?php echo $imgHtml; ?>
             <div class="overlay">
-                <span class="caption"><?php echo Mage::helper('core/string')->truncate(strip_tags($image->getCaption()), 64, '..'); ?></span>
+                <?php if (count($tagNames) > 0): ?>
+                <div class="tags">
+                    <label><?php echo $this->__('Tags:'); ?></label>
+                    <span class="tag"><?php echo implode('</span>, <span class="tag">', $tagNames); ?></span>
+                </div>
+                <?php endif; ?>
                 <span class="title"><?php echo $image->getTitle(); ?></span>
+                <p class="caption"><?php echo $image->getCaption(); ?></p>
             </div>
-        </li>
+            <?php foreach ($positionedTags as $tag): ?>
+            <div class="positioned-tag <?php echo $tag->getType(); ?>"
+                 data-id="<?php echo $tag->getId(); ?>"
+                 data-type="<?php echo $tag->getType(); ?>"
+                 data-x="<?php echo intval($tag->getRelativeX($bounds)*$imageWidth); ?>"
+                 data-y="<?php echo intval($tag->getRelativeY($bounds)*$imageHeight); ?>"
+                 style="display: none;">
+                <?php echo $tag->getName(); ?>
+            </div>
+            <?php endforeach; ?>
+        </li><!--
     <?php endforeach; ?>
-    </ul>
+ --></ul>
+    <button class="previous" title="<?php echo $this->__('Previous'); ?>">&laquo;</button>
+    <button class="next" title="<?php echo $this->__('Next'); ?>">&raquo;</button>
 </div>
 <script type="text/javascript">
     
@@ -73,29 +115,109 @@
                 if (!(this._elem = $(id))) {
                     return;
                 }
-                this._items = this._elem.select('li');
+                this._items = this._elem.select('li.image');
                 if (!this._items.length) {
                     return;
                 }
                 this._initFakes(2);
+                this._initControls();
                 this.slide('right', 0);
                 this.start();
                 this._elem.observe('mouseover', this.stop.bind(this));
                 this._elem.observe('mouseout', this.start.bind(this));
+                var self = this;
+                this._elem.next('button.next').observe('click', function() {
+                    self.stop();
+                    self.slide('right');
+                    self.start();
+                });
+                this._elem.next('button.previous').observe('click', function() {
+                    self.stop();
+                    self.slide('left');
+                    self.start();
+                });
+            },
+            _initControls: function()
+            {
+                var self = this;
+                this._elem.select('li.image').each(function(image) {
+                    image.select('div.positioned-tag').each(function(tag) {
+                        var y = tag.getAttribute('data-y');
+                        var x = tag.getAttribute('data-x');
+                        var bounds = tag.bounds();
+                        y -= bounds.height/2;
+                        x -= bounds.width/2;
+                        tag.style.top  = parseInt(y) + 'px';
+                        tag.style.left = parseInt(x) + 'px';
+                    });
+                    image.down('img').observe('mouseenter', function() {
+                        image.select('div.positioned-tag').each(function(tag) {
+                            self._effect(
+                                tag,
+                                Effect.Appear,
+                                'tag-' + tag.getAttribute('data-id')
+                            );
+                        });
+                        var overlay = image.down('div.overlay');
+                        self._effect(
+                            overlay,
+                            Effect.Morph,
+                            'overlay-' + image.getAttribute('data-id'),
+                            {style: 'bottom: -' + overlay.bounds().height + 'px'}
+                        );
+                    });
+                    image.observe('mouseleave', function() {
+                        image.select('div.positioned-tag').each(function(tag) {
+                            self._effect(
+                                tag,
+                                Effect.Fade,
+                                'tag-' + tag.getAttribute('data-id')
+                            );
+                        });
+                        self._effect(
+                            image.down('div.overlay'),
+                            Effect.Morph,
+                            'overlay-' + image.getAttribute('data-id'),
+                            {style: 'bottom: 0px'}
+                        );
+                    });
+                });
             },
             _initFakes: function(num)
             {
-                var fake, numItems = this._items.length;
+                var real, fake, numItems = this._items.length;
                 for (var i = 0; i < num; ++i) {
+                    real = this._items[((numItems - 1) - i)%numItems];
                     fake = new Element('li')
-                                .addClassName('fake')
-                                .update(this._items[((numItems - 1) - i)%numItems].innerHTML);
+                                .addClassName('fake image')
+                                .update(real.innerHTML);
+                    fake.setAttribute('data-id', real.getAttribute('data-id'));
                     this._elem.insert({top: fake});
+                    real = this._items[i%numItems];
                     fake = new Element('li')
-                                .addClassName('fake')
-                                .update(this._items[i%numItems].innerHTML);
+                                .addClassName('fake image')
+                                .update(real.innerHTML);
+                    fake.setAttribute('data-id', real.getAttribute('data-id'));
                     this._elem.insert({bottom: fake});
                 }
+            },
+            _effect: function(elem, effect, scope, options)
+            {
+                var defaultOptions = {
+                    duration: 0.25
+                }
+                if (scope) {
+                    defaultOptions.queue = {scope: scope};
+                }
+                if (typeof options == 'object') {
+                    for (var key in options) {
+                        defaultOptions[key] = options[key];
+                    }
+                }
+                if (defaultOptions.queue && defaultOptions.queue.scope) {
+                    Effect.Queues.get(defaultOptions.queue.scope).invoke('cancel');
+                }
+                new effect(elem, defaultOptions);
             },
             _targetOffset: function(item)
             {
@@ -111,7 +233,7 @@
                     direction = 'right';
                 }
                 if (typeof duration == 'undefined') {
-                    duration = 1;
+                    duration = 0.5;
                 }
                 var numItems = this._items.length;
                 if (this._current != (this._current + numItems)%numItems) { // on a fake
@@ -121,15 +243,17 @@
                 }
                 var item;
                 if (direction == 'right') {
-                    item = this._items[this._current++].next('li');
+                    item = this._items[this._current++].next('li.image');
                 } else {
-                    item = this._items[this._current--].previous('li');
+                    item = this._items[this._current--].previous('li.image');
                 }
                 var offset = this._targetOffset(item);
-                new Effect.Move(this._elem, {
-                                x: offset,
-                                duration: duration,
-                                mode: 'absolute'});
+                this._effect(
+                    this._elem,
+                    Effect.Move,
+                    this._elem.getAttribute('id') + '-slide',
+                    {x: offset, mode: 'absolute', duration: duration}
+                );
             },
             start: function()
             {
@@ -137,7 +261,7 @@
                 this._interval = window.setInterval(
                                     function() {
                                         intervalFunction('<?php echo $this->getDirection(); ?>');
-                                    }, 4000);
+                                    }, <?php echo $this->getInterval(); ?>);
             },
             stop: function()
             {

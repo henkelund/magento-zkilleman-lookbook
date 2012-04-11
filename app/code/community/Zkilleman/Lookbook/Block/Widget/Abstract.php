@@ -31,8 +31,38 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     extends Mage_Core_Block_Template
     implements Mage_Widget_Block_Interface
 {
+    
+    /**
+     *
+     * @var Zkilleman_Lookbook_Model_Resource_Image_Collection 
+     */
     protected $_imageCollection = null;
     
+    /**
+     * Arbitrary min width value
+     *
+     * @var int 
+     */
+    protected $_minWidth = 64;
+    
+    /**
+     * Arbitrary max width value
+     *
+     * @var int 
+     */
+    protected $_maxWidth = 4096;
+    
+    /**
+     * Default theme 1column width
+     *
+     * @var int 
+     */
+    protected $_defaultWidth = 900;
+    
+    /**
+     *
+     * @return mixed Zkilleman_Lookbook_Model_Resource_Image_Collection|false
+     */
     public function getImageCollection()
     {
         if ($this->_imageCollection === null) {
@@ -70,6 +100,11 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
         return $this->_imageCollection;
     }
     
+    /**
+     * Widget config tags merged with user provided tags
+     *
+     * @return array
+     */
     public function getTags()
     {
         //@todo There should be a limit on the number of request param tags
@@ -83,6 +118,22 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                 PREG_SPLIT_NO_EMPTY));
     }
     
+    /**
+     *
+     * @return int 
+     */
+    public function getWidth()
+    {
+        $width = $this->hasData('width') ?
+                    intval($this->getData('width')) : $this->_defaultWidth;
+        return (int) min($this->_maxWidth, max($this->_minWidth, $width));
+    }
+    
+    /**
+     * Renders widget html if image collection exists
+     * 
+     * @return string
+     */
     protected function _toHtml()
     {
         if ($this->getImageCollection()) {
