@@ -31,6 +31,7 @@
     $images      = $this->getImageCollection();
     $imageWidth  = $this->getWidth();
     $imageHeight = $this->getHeight();
+    $helper      = Mage::helper('lookbook');
 ?>
 <div class="slideshow-wrapper">
     <ul id="<?php echo $this->getHtmlId(); ?>" class="slideshow"><!--
@@ -78,7 +79,7 @@
                  data-x="<?php echo intval($tag->getRelativeX($bounds)*$imageWidth); ?>"
                  data-y="<?php echo intval($tag->getRelativeY($bounds)*$imageHeight); ?>"
                  style="display: none;">
-                <?php echo $tag->getName(); ?>
+                <a href="<?php echo $helper->getTagUrl($tag); ?>"><?php echo $tag->getName(); ?></a>
             </div>
             <?php endforeach; ?>
         </li><!--

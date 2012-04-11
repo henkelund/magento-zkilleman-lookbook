@@ -114,10 +114,10 @@ div.positioned-tag {
     border-radius: 5px;
     box-shadow: 0 1px 0 #415966 inset;
     padding: 0 4px;
-    cursor: pointer;
 }
-div.positioned-tag.plain {
-    cursor: default;
+div.positioned-tag a {
+    color: #ebbc58;
+    text-decoration: none;
 }
 div.positioned-tag:hover {
     z-index: 999;

@@ -64,4 +64,79 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
     }
+    
+    public function getRequestTags($limit = true)
+    {
+        $config = Mage::getModel('lookbook/config');
+        $tagString = Mage::app()->getRequest()->getParam($config->getTagParamName());
+        $limit = $limit === true ?
+                    $config->getRequestTagLimit() :
+                    (is_int($limit) ? $limit : false);
+        $tags = array_unique(preg_split(
+                '/\s*,\s*/', 
+                trim(Mage::helper('core/string')->cleanString($tagString)),
+                null,
+                PREG_SPLIT_NO_EMPTY));
+        if ($limit !== false && count($tags) > $limit) {
+            $tags = array_slice($tags, 0, $limit);
+        }
+        return $tags;
+    }
+    
+    protected function _strToLower($string)
+    {
+        return mb_strtolower($string, 'UTF-8');
+    }
+    
+    /**
+     *
+     * @param  mixed  $tag
+     * @param  bool   $toggle
+     * @return string
+     */
+    public function getTagUrl($tag, $toggle = true)
+    {
+        if (!is_array($tag)) {
+            $tag = array($tag);
+        }
+        $tag = array_unique($tag);
+
+        $config      = Mage::getModel('lookbook/config');
+        $urlHelper   = Mage::helper('core/url');
+        $paramName   = $config->getTagParamName();
+        $paramLimit  = $config->getRequestTagLimit();
+        $requestTags = $this->getRequestTags(false);
+
+        $map = array();
+        if (!empty($requestTags)) {
+            $map = array_combine(
+                        array_map(array($this, '_strToLower'), $requestTags),
+                        $requestTags);
+        }
+
+        foreach ($tag as $t) {
+            if ($t instanceof Varien_Object) {
+                $t = $t->getName();
+            }
+            $tl = $this->_strToLower($t);
+            if ($toggle && isset($map[$tl])) {
+                unset($map[$tl]);
+            } else {
+                array_unshift($map, $t);
+            }
+        }
+
+        if ($paramLimit !== false && count($map) > $paramLimit) {
+            $map = array_slice($map, 0, $paramLimit);
+        }
+
+        $url = $urlHelper->getCurrentUrl();
+        $url = $urlHelper->removeRequestParam($url, $paramName);
+        if (count($map) > 0) {
+            $url = $urlHelper->addRequestParam(
+                        $url, array($paramName => implode(',', $map)));
+        }
+
+        return $url;
+    }
 }

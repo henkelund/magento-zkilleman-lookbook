@@ -140,4 +140,14 @@
             </image>
         </lookbook>
     </global>
+
+    <default>
+        <cms>
+            <lookbook>
+                <allow_param_tags>1</allow_param_tags>
+                <tags_param_name>tags</tags_param_name>
+                <max_param_tags>3</max_param_tags>
+            </lookbook>
+        </cms>
+    </default>
 </config>

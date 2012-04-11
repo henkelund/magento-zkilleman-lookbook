@@ -29,7 +29,10 @@
 
 class Zkilleman_Lookbook_Model_Config
 {
-    const XML_PATH_TAG_TYPES = 'global/lookbook/image/tag/types';
+    const XML_PATH_TAG_TYPES        = 'global/lookbook/image/tag/types';
+    const XML_PATH_ALLOW_PARAM_TAGS = 'cms/lookbook/allow_param_tags';
+    const XML_PATH_TAGS_PARAM_NAME  = 'cms/lookbook/tags_param_name';
+    const XML_PATH_MAX_PARAM_TAGS   = 'cms/lookbook/max_param_tags';
     
     /**
      *
@@ -80,5 +83,36 @@ class Zkilleman_Lookbook_Model_Config
     {
         $this->_loadTagTypes();
         return isset(self::$_tagTypes[$key]) ? self::$_tagTypes[$key] : null;
+    }
+    
+    /**
+     * Whether user tag search is allowed globally 
+     *
+     * @return bool 
+     */
+    public function isRequestTagsAllowed()
+    {
+        return (bool) Mage::getStoreConfig(self::XML_PATH_ALLOW_PARAM_TAGS);
+    }
+    
+    /**
+     * Query parameter key to be used for tag search
+     *
+     * @return string 
+     */
+    public function getTagParamName()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_TAGS_PARAM_NAME);
+    }
+    
+    /**
+     * Maximum number of request tags
+     *
+     * @return mixed int|false 
+     */
+    public function getRequestTagLimit()
+    {
+        $limit = (int) Mage::getStoreConfig(self::XML_PATH_MAX_PARAM_TAGS);
+        return $limit > 0 ? $limit : false;
     }
 }
