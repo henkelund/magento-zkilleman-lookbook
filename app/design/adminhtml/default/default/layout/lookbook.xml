@@ -70,4 +70,10 @@
             <block type="lookbook/adminhtml_image_set_edit" name="lookbook.image_set.edit"></block>
         </reference>
     </lookbook_adminhtml_image_set_edit>
+    
+    <adminhtml_cache_index>
+        <reference name="cache.additional">
+            <block type="adminhtml/template" name="lookbook.system.cache" template="lookbook/system/cache.phtml"></block>
+        </reference>
+    </adminhtml_cache_index>
 </layout>

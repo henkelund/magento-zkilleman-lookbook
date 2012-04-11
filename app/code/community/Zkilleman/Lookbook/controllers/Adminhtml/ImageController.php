@@ -179,4 +179,25 @@ class Zkilleman_Lookbook_Adminhtml_ImageController
                 $this->__('Unable to find an image to delete.'));
         $this->_redirect('*/*/');
     }
+    
+    public function flushCacheAction()
+    {
+        try {
+            $directory = Mage::helper('lookbook')->getCachedMediaBaseDir() . DS;
+            $io = new Varien_Io_File();
+            $io->rmdir($directory, true);
+            Mage::helper('core/file_storage_database')->deleteFolder($directory);
+            $this->_getSession()->addSuccess(
+                Mage::helper('lookbook')->__('The lookbook image cache was flushed.')
+            );
+        } catch (Mage_Core_Exception $e) {
+            $this->_getSession()->addError($e->getMessage());
+        } catch (Exception $e) {
+            $this->_getSession()->addException(
+                    $e, 
+                    Mage::helper('adminhtml')
+                        ->__('An error occurred while clearing the image cache.'));
+        }
+        $this->_redirect('adminhtml/cache/index');
+    }
 }
