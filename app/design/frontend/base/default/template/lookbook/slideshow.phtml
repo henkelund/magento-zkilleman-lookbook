@@ -66,14 +66,22 @@
                 <?php if (count($tagNames) > 0): ?>
                 <div class="tags">
                     <label><?php echo $this->__('Tags:'); ?></label>
-                    <span class="tag"><?php echo implode('</span>, <span class="tag">', $tagNames); ?></span>
+                    <?php $tagHtml = array(); ?>
+                    <?php foreach ($tagNames as $tagName): ob_start(); ?>
+                    <span class="tag<?php if ($this->tagIsActive($tagName)): ?> active<?php endif; ?>"><!--
+                     --><a href="<?php echo $helper->getTagUrl($tagName); ?>"><!--
+                         --><?php echo $tagName; ?><!--
+                     --></a><!--
+                 --></span>
+                    <?php $tagHtml[] = trim(ob_get_clean()); endforeach; ?>
+                    <?php echo implode(', ', $tagHtml); ?>
                 </div>
                 <?php endif; ?>
                 <span class="title"><?php echo $image->getTitle(); ?></span>
                 <p class="caption"><?php echo $image->getCaption(); ?></p>
             </div>
             <?php foreach ($positionedTags as $tag): ?>
-            <div class="positioned-tag <?php echo $tag->getType(); ?>"
+            <div class="positioned-tag <?php echo $tag->getType(); ?><?php if ($this->tagIsActive($tag)): ?> active<?php endif; ?>"
                  data-id="<?php echo $tag->getId(); ?>"
                  data-type="<?php echo $tag->getType(); ?>"
                  data-x="<?php echo intval($tag->getRelativeX($bounds)*$imageWidth); ?>"

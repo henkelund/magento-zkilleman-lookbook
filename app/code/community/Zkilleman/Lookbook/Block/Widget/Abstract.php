@@ -107,15 +107,32 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
      */
     public function getTags()
     {
-        //@todo There should be a limit on the number of request param tags
-        $tagString = trim(
-                ((string) $this->getData('tags')) . ',' .
-                ((string) $this->getRequest()->getParam('tags')), ', ');
-        return array_unique(preg_split(
-                '/\s*,\s*/', 
-                $tagString,
-                null,
-                PREG_SPLIT_NO_EMPTY));
+        $tags = preg_split(
+                    '/\s*,\s*/', 
+                    (string) trim($this->getData('tags')),
+                    null,
+                    PREG_SPLIT_NO_EMPTY);
+        if (Mage::getModel('lookbook/config')->isRequestTagsAllowed()) {
+            $tags = array_merge($tags, Mage::helper('lookbook')->getRequestTags());
+        }
+        return array_unique($tags);
+    }
+    
+    /**
+     * Whether given tag was used in current query
+     *
+     * @param  mixed Varien_Object|string
+     * @return bool 
+     */
+    public function tagIsActive($tag)
+    {
+        if ($tag instanceof Varien_Object) {
+            $tag = $tag->getName();
+        }
+        $helper = Mage::helper('lookbook');
+        return in_array(
+                $helper->strToLower($tag),
+                $helper->arrayToLower($this->getTags()));
     }
     
     /**

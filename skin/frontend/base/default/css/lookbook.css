@@ -64,6 +64,13 @@ ul.slideshow li div.overlay div.tags {
 ul.slideshow li div.overlay div.tags span.tag {
     color: #ebbc58;
 }
+ul.slideshow li div.overlay div.tags span.tag a {
+    color: #ebbc58;
+    text-decoration: none;
+}
+ul.slideshow li div.overlay div.tags span.tag.active a {
+    text-decoration: underline;
+}
 ul.slideshow li div.overlay span.title {
     margin-left: 10px;
     color: #a7c6dd;
@@ -118,6 +125,9 @@ div.positioned-tag {
 div.positioned-tag a {
     color: #ebbc58;
     text-decoration: none;
+}
+div.positioned-tag.active a {
+    text-decoration: underline;
 }
 div.positioned-tag:hover {
     z-index: 999;

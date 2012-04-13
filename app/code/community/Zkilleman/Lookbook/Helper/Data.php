@@ -31,6 +31,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
 {
     const ORIGINAL_PATH = 'lookbook';
     const CACHE_PATH    = 'lookbook/cache';
+    const TAG_SEPARATOR = '|';
     
     public function getMediaBaseDir()
     {
@@ -73,7 +74,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
                     $config->getRequestTagLimit() :
                     (is_int($limit) ? $limit : false);
         $tags = array_unique(preg_split(
-                '/\s*,\s*/', 
+                sprintf('/\s*%s\s*/', preg_quote(self::TAG_SEPARATOR)), 
                 trim(Mage::helper('core/string')->cleanString($tagString)),
                 null,
                 PREG_SPLIT_NO_EMPTY));
@@ -83,9 +84,14 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
         return $tags;
     }
     
-    protected function _strToLower($string)
+    public function strToLower($string)
     {
         return mb_strtolower($string, 'UTF-8');
+    }
+    
+    public function arrayToLower($array)
+    {
+        return array_map(array($this, 'strToLower'), $array);
     }
     
     /**
@@ -110,7 +116,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
         $map = array();
         if (!empty($requestTags)) {
             $map = array_combine(
-                        array_map(array($this, '_strToLower'), $requestTags),
+                        $this->arrayToLower($requestTags),
                         $requestTags);
         }
 
@@ -118,7 +124,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
             if ($t instanceof Varien_Object) {
                 $t = $t->getName();
             }
-            $tl = $this->_strToLower($t);
+            $tl = $this->strToLower($t);
             if ($toggle && isset($map[$tl])) {
                 unset($map[$tl]);
             } else {
@@ -133,8 +139,8 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
         $url = $urlHelper->getCurrentUrl();
         $url = $urlHelper->removeRequestParam($url, $paramName);
         if (count($map) > 0) {
-            $url = $urlHelper->addRequestParam(
-                        $url, array($paramName => implode(',', $map)));
+            $url = $urlHelper->addRequestParam($url,
+                        array($paramName => implode(self::TAG_SEPARATOR, $map)));
         }
 
         return $url;
