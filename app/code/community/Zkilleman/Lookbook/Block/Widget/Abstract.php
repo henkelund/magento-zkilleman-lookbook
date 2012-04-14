@@ -122,7 +122,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                                 array('t' => 'lookbook/image_tag'),
                                 'main_table.image_id = t.image_id',
                                 array())
-                        ->addFieldToFilter('t.name', array('in' => array($tags)))
+                        ->addFieldToFilter('t.name', array('in' => $tags))
                         ->distinct(true);
             }
             $this->setData('image_collection', $collection);
