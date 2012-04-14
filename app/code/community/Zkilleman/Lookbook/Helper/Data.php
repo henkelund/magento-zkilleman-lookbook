@@ -68,7 +68,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
     
     public function getRequestTags($limit = true)
     {
-        $config = Mage::getModel('lookbook/config');
+        $config = Mage::getSingleton('lookbook/config');
         $tagString = Mage::app()->getRequest()->getParam($config->getTagParamName());
         $limit = $limit === true ?
                     $config->getRequestTagLimit() :
@@ -107,7 +107,7 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
         }
         $tag = array_unique($tag);
 
-        $config      = Mage::getModel('lookbook/config');
+        $config      = Mage::getSingleton('lookbook/config');
         $urlHelper   = Mage::helper('core/url');
         $paramName   = $config->getTagParamName();
         $paramLimit  = $config->getRequestTagLimit();

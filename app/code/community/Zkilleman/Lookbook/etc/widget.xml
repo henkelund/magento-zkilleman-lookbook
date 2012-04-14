@@ -36,27 +36,28 @@
             <set_handle translate="label">
                 <required>0</required>
                 <visible>1</visible>
-                <label>Set handle</label>
-                <type>text</type>
+                <label>Image Set</label>
+                <type>select</type>
+                <source_model>lookbook/config_source_sethandles</source_model>
             </set_handle>
             <tags translate="label description">
                 <required>0</required>
                 <visible>1</visible>
                 <label>Tags</label>
                 <type>text</type>
-                <description><![CDATA[Comma separated list of tags.]]></description>
+                <description><![CDATA[Separate multiple tags with "|" (pipe).]]></description>
             </tags>
             <width translate="label description">
                 <required>0</required>
                 <visible>1</visible>
-                <label>Widget width</label>
+                <label>Image Width</label>
                 <type>text</type>
-                <description><![CDATA[Widget width in pixels. Defaults to 900.]]></description>
+                <description><![CDATA[Image width in pixels. Defaults to 900.]]></description>
             </width>
             <height translate="label description">
                 <required>0</required>
                 <visible>1</visible>
-                <label>Image height</label>
+                <label>Image Height</label>
                 <type>text</type>
                 <description><![CDATA[Pixel value or ratio (i.e. '16:9'). Defaults to the Golden Ratio.]]></description>
             </height>

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Zkilleman_Lookbook
  *
@@ -27,12 +26,21 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
--->
-<layout>
-    <default>
-        <reference name="head">
-            <action method="addCss"><stylesheet>css/lookbook.css</stylesheet></action>
-            <action method="addItem"><type>skin_js</type><name>js/lookbook.js</name><params/></action>
-        </reference>
-    </default>
-</layout>
+
+class Zkilleman_Lookbook_Model_Config_Source_Sethandles
+{
+    public function toOptionArray()
+    {
+        $options = array(
+            '' => Mage::helper('lookbook')->__('-- None --')
+        );
+        $setCollection = Mage::getModel('lookbook/image_set')
+                                ->getCollection()
+                                ->addFieldToSelect(array('title', 'handle'))
+                                ->setOrder('title', 'asc');
+        foreach ($setCollection as $set) {
+            $options[$set->getHandle()] = $set->getTitle();
+        }
+        return $options;
+    }
+}

@@ -31,12 +31,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     extends Mage_Core_Block_Template
     implements Mage_Widget_Block_Interface
 {
-    
-    /**
-     *
-     * @var Zkilleman_Lookbook_Model_Resource_Image_Collection 
-     */
-    protected $_imageCollection = null;
+    const TAG_SEPARATOR = '|';
     
     /**
      * Arbitrary min width value
@@ -60,44 +55,79 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     protected $_defaultWidth = 900;
     
     /**
+     * Arbitrary min height value
+     *
+     * @var int 
+     */
+    protected $_minHeight = 64;
+    
+    /**
+     * Arbitrary max height value
+     *
+     * @var int 
+     */
+    protected $_maxHeight = 4096;
+    
+    /**
+     * Approximation of the golden ratio
+     *
+     * @var int 
+     */
+    protected $_defaultHeight = '610:377';
+    
+    /**
+     * Counter used to produce unique identifiers for each widget instance
+     *
+     * @var int 
+     */
+    protected static $_instanceCount = 0;
+    
+    /**
+     * Internal constructor
+     * 
+     */
+    protected function _construct()
+    {
+        $this->setHtmlId('lookbook_widget_' . self::$_instanceCount++);
+        parent::_construct();
+    }
+    
+    /**
      *
      * @return mixed Zkilleman_Lookbook_Model_Resource_Image_Collection|false
      */
     public function getImageCollection()
     {
-        if ($this->_imageCollection === null) {
+        if (!$this->hasData('image_collection')) {
+            $collection = false;
             if ($handle = $this->getSetHandle()) {
                 $set = Mage::getModel('lookbook/image_set')->loadByHandle($handle);
                 if ($set->getId()) {
-                    $this->_imageCollection = $set->getImageCollection();
+                    $collection = $set->getImageCollection();
                 } else {
                     // if set specified but doesn't exist
                     // return false & don't render widget
-                    $this->_imageCollection = false;
+                    $this->setData('image_collection', false);
                     return false;
                 }
             }
-            if (!$this->_imageCollection) {
-                $this->_imageCollection = 
-                            Mage::getModel('lookbook/image')
+            if (!$collection) {
+                $collection = Mage::getModel('lookbook/image')
                                     ->getCollection()
                                     ->addFieldToFilter('is_active', 1)
-                                    ->setOrder('main_table.created_at');
+                                    ->setOrder('created_at', 'desc');
             }
             if ($tags = $this->getTags()) {
-                $tagTable = Mage::getModel('lookbook/image_tag')
-                                    ->getResource()->getMainTable();
-                $this->_imageCollection->getSelect()
-                            ->joinInner(
-                                array('t' => $tagTable),
+                $collection->join(
+                                array('t' => 'lookbook/image_tag'),
                                 'main_table.image_id = t.image_id',
-                                array()
-                            )
-                            ->where('t.name IN (?)', $tags)
-                            ->distinct();
+                                array())
+                        ->addFieldToFilter('t.name', array('in' => array($tags)))
+                        ->distinct(true);
             }
+            $this->setData('image_collection', $collection);
         }
-        return $this->_imageCollection;
+        return $this->getData('image_collection');
     }
     
     /**
@@ -108,11 +138,11 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     public function getTags()
     {
         $tags = preg_split(
-                    '/\s*,\s*/', 
+                    sprintf('/\s*%s\s*/', preg_quote(self::TAG_SEPARATOR)), 
                     (string) trim($this->getData('tags')),
                     null,
                     PREG_SPLIT_NO_EMPTY);
-        if (Mage::getModel('lookbook/config')->isRequestTagsAllowed()) {
+        if (Mage::getSingleton('lookbook/config')->isRequestTagsAllowed()) {
             $tags = array_merge($tags, Mage::helper('lookbook')->getRequestTags());
         }
         return array_unique($tags);
@@ -144,6 +174,34 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
         $width = $this->hasData('width') ?
                     intval($this->getData('width')) : $this->_defaultWidth;
         return (int) min($this->_maxWidth, max($this->_minWidth, $width));
+    }
+    
+    /**
+     *
+     * @return int 
+     */
+    public function getHeight()
+    {
+        $height = $this->hasData('height') ?
+                        $this->getData('height') : $this->_defaultHeight;
+        
+        if (is_numeric($height)) {
+            $height = intval($height);
+        } else {
+            $matches = array();
+            if (preg_match('/^(\d+(\.\d+)?):(\d+(\.\d+)?)$/', $height, $matches)) {
+                $w = floatval($matches[1]);
+                $h = floatval($matches[3]);
+                if ($w > 0 && $h > 0) {
+                    $height = $this->getWidth()*($h/$w);
+                } else {
+                    $height = 0;
+                }
+            } else {
+                $height = 0;
+            }
+        }
+        return (int) min($this->_maxHeight, max($this->_minHeight, $height));
     }
     
     /**
