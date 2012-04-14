@@ -94,6 +94,20 @@ class Zkilleman_Lookbook_Helper_Data extends Mage_Core_Helper_Abstract
         return array_map(array($this, 'strToLower'), $array);
     }
     
+    public function strToIntArray($str, $sep = ',')
+    {
+        return array_map(
+                    'intval',
+                    array_filter(
+                        preg_split(
+                            sprintf('/\s*%s\s*/', preg_quote($sep)),
+                            $str,
+                            null,
+                            PREG_SPLIT_NO_EMPTY
+                        ),
+                        'is_numeric'));
+    }
+    
     /**
      *
      * @param  mixed  $tag

@@ -120,6 +120,25 @@ ul#lookbookTagList li.entry div.type-container div.image-tag-product {
 ul#lookbookTagList li.entry div.type-container div.image-tag-product .product-info {
     margin-bottom: 4px;
 }
+div.set-member-column,
+div.set-candidate-column {
+    width: 280px;
+    float: left;
+    margin-right: 10px;
+}
+.fieldset-wide .form-list td.value div.set-candidate-column input.input-text {
+    width: 274px !important;
+    border-top: 0 none;
+    margin-top: -1px;
+}
+div.set-candidate-column div.autocomplete {
+    width: 278px !important;
+    padding: 0;
+}
+div.set-candidate-column div.autocomplete ul li {
+    padding: 3px 4px 1px 4px;
+    line-height: 1em;
+}
 ul#setMemberImages,
 ul#setCandidateImages {
     border-width: 1px;
@@ -127,10 +146,7 @@ ul#setCandidateImages {
     border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
     background: white;
     padding: 4px;
-    width: 270px;
     min-height: 102px;
-    float: left;
-    margin-right: 10px;
 }
 ul#setMemberImages {
     background-color: #eff5ea;

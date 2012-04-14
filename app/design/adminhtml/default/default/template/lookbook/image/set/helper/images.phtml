@@ -32,16 +32,46 @@
  *
  * @var Zkilleman_Lookbook_Block_Adminhtml_Image_Set_Helper_Images 
  */
-$element    = $this->getElement();
-$candidates = Mage::getModel('lookbook/image')->getCollection();
+$element = $this->getElement();
+$members = $element->getImageCollection();
+$width   = 270;
+$height  = 100;
+$st      = $this->__('Type to search..'); // search text
 ?>
 <input
     id="<?php echo $element->getHtmlId(); ?>"
     type="hidden"
     name="<?php echo $element->getName(); ?>"
     value="<?php echo $element->getValue(); ?>" />
-<ul id="setMemberImages"></ul>
-<ul id="setCandidateImages"></ul>
+<div class="set-member-column">
+    <ul id="setMemberImages">
+        <?php if ($members) foreach ($members as $image): ?>
+        <li id="image_<?php echo $image->getId(); ?>"
+            data-id="<?php echo $image->getId(); ?>">
+            <?php echo $image->getHtml($width, $height, array(
+                                'title' => $image->getTitle())); ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <p class="note">
+        <span>
+            <?php echo $this->__('Search for images in the field to the right.'); ?>
+            <?php echo $this->__('Drop an image in the left box to add it to this set.'); ?>
+        </span>
+    </p>
+</div>
+<div class="set-candidate-column">
+    <ul id="setCandidateImages"></ul>
+    <input
+        id="<?php echo $element->getHtmlId(); ?>_search"
+        type="text"
+        class="input-text"
+        value="<?php echo $st; ?>"
+        onfocus="if (this.value == '<?php echo $st; ?>') this.value='';"
+        onblur="this.value = '<?php echo $st; ?>';"
+        />
+    <div class="autocomplete" id="<?php echo $element->getHtmlId(); ?>_ac" style="display: none;"></div>
+</div>
 <script type="text/javascript">
 //<![CDATA[
     (function() {
@@ -50,60 +80,59 @@ $candidates = Mage::getModel('lookbook/image')->getCollection();
         {
             var ids = [];
             $$('#setMemberImages li').each(function(elem) {
-                ids.push(parseInt(elem.getAttribute('rel')));
+                ids.push(parseInt(elem.getAttribute('data-id')));
             });
             $('<?php echo $element->getHtmlId(); ?>').value = ids.join(',');
         }
         
-        function createImageElement(id, src, title)
-        {
-            var htmlId = 'image_' + id;
-            if ($(htmlId)) {
-                if (src) {
-                    $(htmlId + '_img').setAttribute('src', src);
-                    $(htmlId + '_img').setAttribute('title', title);
-                }
-            } else {
-                var candidate = new Element('li', {id: htmlId});
-                candidate.setAttribute('rel', id);
-                var image = new Element('img', {id: htmlId + '_img'});
-                candidate.insert(image);
-                if (typeof src != 'undefined') {
-                    image.setAttribute('src', src);
-                    image.setAttribute('title', title);
-                    $('setCandidateImages').insert(candidate);
-                } else {
-                    $('setMemberImages').insert(candidate);
-                }
+        function initDropzone(id, containment) {
+            var options = {
+                constraint  : false,
+                dropOnEmpty : true,
+                containment : containment,
+                hoverclass  : 'hover'
+            };
+            if (id == 'setMemberImages') {
+                options.onUpdate = refershMemberIds;
             }
+            Sortable.create(id, options);
+        }
+        
+        function getAllImageIds()
+        {
+            var ids = [];
+            $$('#setMemberImages li, #setCandidateImages li').each(function(elem) {
+                ids.push(parseInt(elem.getAttribute('data-id')));
+            });
+            return ids;
         }
 
         document.observe('dom:loaded', function() {
-            var memberIds = $('<?php echo $element->getHtmlId(); ?>').value.split(',');
-            memberIds.each(function(id) {
-                id = parseInt(id);
-                if (id > 0) {
-                    createImageElement(id);
-                }
-            });
-            <?php foreach ($candidates as $candidate): ?>
-            createImageElement(
-                <?php echo $candidate->getId() ?>,
-                '<?php echo $candidate->getUrl(270, 100, true); ?>',
-                '<?php echo addslashes($candidate->getTitle()); ?>'
-            );
-            <?php endforeach; ?>
-
+            // Init dropzones
             var containers = ['setMemberImages', 'setCandidateImages'];
             containers.each(function(id) {
-                Sortable.create(id, {
-                    constraint: false,
-                    dropOnEmpty: true,
-                    containment: containers,
-                    hoverclass: 'hover',
-                    onUpdate: refershMemberIds
-                });
+                initDropzone(id, containers);
             });
+            
+            // Init searchbox
+            new Ajax.Autocompleter(
+                '<?php echo $element->getHtmlId(); ?>_search',
+                '<?php echo $element->getHtmlId(); ?>_ac',
+                '<?php echo $this->getUrl('*/adminhtml_image_set/autocomplete'); ?>',
+                {
+                    paramName: 'q',
+                    parameters: 'width=<?php echo $width; ?>&height=<?php echo $height; ?>',
+                    callback: function(input, value) {
+                        return value + '&exclude=' + getAllImageIds().join(',');
+                    },
+                    updateElement: function(li) {
+                        $(li).removeClassName('selected').stopObserving();
+                        $('setCandidateImages').insert(li);
+                        initDropzone('setCandidateImages', containers);
+                        $('<?php echo $element->getHtmlId(); ?>_search').value = '';
+                    }
+                }
+            );
         });
     
     })();

@@ -36,12 +36,21 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Set_Helper_Images
      */
     protected $_template;
     
+    /**
+     * Constructor
+     *
+     * @param array $data 
+     */
     public function __construct($data)
     {
         parent::__construct($data);
         $this->_template = 'lookbook/image/set/helper/images.phtml';
     }
     
+    /**
+     *
+     * @return string
+     */
     public function getElementHtml()
     {
         return Mage::app()
@@ -50,5 +59,39 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Set_Helper_Images
                 ->setTemplate($this->_template)
                 ->setElement($this)
                 ->toHtml();
+    }
+    
+    /**
+     * Maybe not the prettiest possibility but it's said to be portable.
+     * 
+     * @see    http://stackoverflow.com/questions/4011056/order-of-where-field-in-sql-query#4011088
+     * @param  array $ids
+     * @return string 
+     */
+    protected function _getOrderByCaseSql($field, array $ids)
+    {
+        $whenPairs = array();
+        $i = 1;
+        foreach ($ids as $id) {
+            $whenPairs[] = sprintf('WHEN %s THEN %s', $id, $i++);
+        }
+        return sprintf('CASE %s %s END', $field, implode(' ', $whenPairs));
+    }
+    
+    /**
+     *
+     * @return mixed false|Zkilleman_Lookbook_Model_Resource_Image_Collection
+     */
+    public function getImageCollection()
+    {
+        $imageIds = Mage::helper('lookbook')->strToIntArray($this->getValue());
+        if (empty($imageIds)) {
+            return false;
+        }
+        return Mage::getModel('lookbook/image')->getCollection()
+                        ->addFieldToFilter('image_id', array('in' => $imageIds))
+                        ->setOrder(
+                            $this->_getOrderByCaseSql('image_id', $imageIds),
+                            'asc');
     }
 }

@@ -143,4 +143,46 @@ class Zkilleman_Lookbook_Adminhtml_Image_SetController
                 $this->__('Unable to find a set to delete.'));
         $this->_redirect('*/*/');
     }
+    
+    public function autocompleteAction()
+    {
+        $width   = (int) $this->getRequest()->getParam('width', 270);
+        $height  = (int) $this->getRequest()->getParam('height', 270);
+        $exclude = $this->getRequest()->getParam('exclude');
+        $exclude = Mage::helper('lookbook')->strToIntArray($exclude);
+        $q       = trim((string) $this->getRequest()->getParam('q'));
+        
+        $items = array();
+        $images = Mage::getModel('lookbook/image')
+                        ->getCollection()
+                        ->setOrder('created_at', 'desc')
+                        ->setPageSize(5);
+        
+        if (!empty($exclude)) {
+            $images->addFieldToFilter('image_id', array('nin' => $exclude));
+        }
+        
+        if (!empty($q)) {
+            $q = '%' . $q . '%';
+            // could not find a way to do this with addFieldToFilter
+            $images->getSelect()
+                        ->where('(title LIKE ?', $q)
+                        ->orWhere('caption LIKE ?)', $q);
+        }
+        
+        foreach ($images as $image) {
+            $items[] = sprintf(
+                            '<li id="%s" data-id="%s">%s</li>',
+                            'image_' . $image->getId(),
+                            $image->getId(),
+                            $image->getHtml($width, $height, array(
+                                'title' => $image->getTitle() . ' - ' .
+                                        $image->getCaption()
+                            ))
+                        );
+        }
+        
+        $this->getResponse()
+                ->setBody(sprintf('<ul>%s</ul>', implode('', $items)));
+    }
 }

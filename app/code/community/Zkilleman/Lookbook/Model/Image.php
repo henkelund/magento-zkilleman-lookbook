@@ -191,7 +191,7 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         }
         $attributeString = '';
         foreach ($attributes as $key => $value) {
-            $attributeString .= sprintf(' %s="%s"', $key, $value);
+            $attributeString .= sprintf(' %s="%s"', $key, htmlspecialchars($value));
         }
         $tagstring = ($tag == 'img') ? '<img%s />' :
                         sprintf('<%s%%s>%s</%s>', $tag, $content, $tag);

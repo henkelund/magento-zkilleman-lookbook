@@ -72,6 +72,8 @@ class Zkilleman_Lookbook_Block_Adminhtml_Image_Set_Edit_Form
             'label'     => $this->__('Handle'),
             'title'     => $this->__('Handle'),
             'required'  => true,
+            'class'     => 'validate-xml-identifier',
+            'note'      => $this->__('Used by widgets to identify this set.')
         ));
 
         $fieldset->addField('description', 'text', array(
