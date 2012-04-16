@@ -159,9 +159,15 @@ class Zkilleman_Lookbook_Model_Image extends Mage_Core_Model_Abstract
         if ($tag == 'img') {
             if ($width && !isset($attributes['width'])) {
                 $attributes['width'] = round($width);
+                if (!$height && !isset($attributes['height'])) {
+                    $attributes['height'] = round($width*$this->getRatio());
+                }
             }
             if ($height && !isset($attributes['height'])) {
                 $attributes['height'] = round($height);
+                if (!$width && !isset($attributes['width'])) {
+                    $attributes['width'] = round($height/$this->getRatio());
+                }
             }
             $attributes['src'] = $this->getUrl($width, $height, true, $bounds);
         } else {

@@ -87,4 +87,31 @@
             </interval>
         </parameters>
     </lookbook_slideshow>
+    <lookbook_masonry type="lookbook/masonry" translate="name description" module="lookbook">
+        <name>Zkilleman Lookbook Masonry</name>
+        <description type="desc">Masonry layout of Zkilleman Lookbook images</description>
+        <parameters>
+            <set_handle translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Image Set</label>
+                <type>select</type>
+                <source_model>lookbook/config_source_sethandles</source_model>
+            </set_handle>
+            <tags translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Tags</label>
+                <type>text</type>
+                <description><![CDATA[Separate multiple tags with "|" (pipe).]]></description>
+            </tags>
+            <width translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Widget Width</label>
+                <type>text</type>
+                <description><![CDATA[Widget width in pixels. Defaults to 900.]]></description>
+            </width>
+        </parameters>
+    </lookbook_masonry>
 </widgets>
