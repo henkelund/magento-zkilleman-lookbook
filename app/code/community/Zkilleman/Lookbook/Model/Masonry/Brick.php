@@ -284,9 +284,8 @@ class Zkilleman_Lookbook_Model_Masonry_Brick extends Varien_Object
             return $this;
         }
         
-        $bottom = $this->getBottom();
         $brick->setPosition(0, 0);
-        $highestRowBottom = pow(2, 32);
+        $highestRowBottom = pow(2, 16);
 
         // Loop backwars through the children to find the most recently added brick
         // that is smaller than $brick. A brick can't be positioned above an already
@@ -315,7 +314,7 @@ class Zkilleman_Lookbook_Model_Masonry_Brick extends Varien_Object
             // If $brick is out of bounds, move it to a new row
             if ($brick->getRight() > $this->getRight()) {
                 $brick->setPosition(0, $highestRowBottom);
-                $highestRowBottom = pow(2, 32);
+                $highestRowBottom = pow(2, 16);
             }
         }
         
@@ -325,7 +324,7 @@ class Zkilleman_Lookbook_Model_Masonry_Brick extends Varien_Object
         $this->_children[] = $brick;
         
         // Update the size of this brick
-        $this->setBottom(max($bottom, $brick->getBottom()));
+        $this->setBottom(max($this->getBottom(), $brick->getBottom()));
         return $this;
     }
     

@@ -29,11 +29,14 @@
 Element.addMethods({
     bounds: function(element) {
         element = $(element);
-        var elemPos = element.cumulativeOffset();
-        var elemDim = element.getDimensions();
+        var elemPos  = element.cumulativeOffset();
+        var elemRPos = element.positionedOffset();
+        var elemDim  = element.getDimensions();
         return {
             top:    elemPos.top,
             left:   elemPos.left,
+            rTop:   elemRPos.top,
+            rLeft:  elemRPos.left,
             width:  elemDim.width,
             height: elemDim.height
         };
@@ -221,5 +224,107 @@ LookbookSlideshow.prototype = {
             window.clearInterval(this._interval);
             this._interval = null;
         }
+    }
+};
+
+var LookbookMasonry = Class.create();
+LookbookMasonry.prototype = {
+    _canvas: null,
+    _bricks: [],
+    initialize: function(canvas)
+    {
+        this._canvas = $(canvas);
+        this._canvas.style.position = 'relative';
+        self = this;
+        this._canvas.select('div.brick').each(function(elem) {
+            self._bricks.push(self._createBrick(elem));
+        });
+    },
+    _createBrick: function(elem)
+    {
+        elem = $(elem);
+        var bounds = elem.bounds();
+        var hrb = elem.hasAttribute('data-hrb') ?
+                    parseInt(elem.getAttribute('data-hrb')) : Math.pow(2, 16);
+        return {
+            elem:   elem,
+            top:    bounds.rTop,
+            left:   bounds.rLeft,
+            width:  bounds.width,
+            height: bounds.height,
+            hrb:    hrb
+        };
+    },
+    _intersects: function(a, b)
+    {
+        if (b instanceof Array) {
+            for (var i = 0; i < b.length; ++i) {
+                if (this._intersects(a, b[i])) {
+                    return b[i];
+                }
+            }
+            return false;
+        }
+        return !(
+            b.top  >= a.top  + a.height  ||
+            b.left >= a.left + a.width   ||
+            b.left + b.width  <= a.left  ||
+            b.top  + b.height <= a.top
+        ) ? b : false;
+    },
+    _getBricksBelow: function(y)
+    {
+        var lower = [];
+        for (var i = 0; i < this._bricks.length; ++i) {
+            if (this._bricks[i].top + this._bricks[i].height >= y) {
+                lower.push(this._bricks[i]);
+            }
+        }
+        return lower;
+    },
+    append: function(elem)
+    {
+        elem = $(elem);
+        elem.setStyle({position: 'absolute'});
+        this._canvas.insert(elem);
+        
+        var brick = this._createBrick(elem),
+            lowerBricks,
+            intersector,
+            canvasWidth = this._canvas.bounds().width;
+            
+        for (var i = this._bricks.length - 1; i >= 0; --i) {
+            if (brick.width >= this._bricks[i].width &&
+                        brick.height >= this._bricks[i].height) {
+                brick.top = this._bricks[i].top;
+                brick.hrb = this._bricks[i].hrb;
+                break;
+            }
+        }
+        
+        lowerBricks = this._getBricksBelow(brick.top);
+        
+        while (false !== (intersector = this._intersects(brick, lowerBricks))) {
+            brick.left = intersector.left + intersector.width;
+            brick.hrb  = Math.min(brick.hrb, intersector.top + intersector.height);
+            
+            if (brick.left + brick.width > canvasWidth) {
+                brick.top  = brick.hrb;
+                brick.left = 0;
+                brick.hrb  = Math.pow(2, 16);
+            }
+        }
+        
+        elem.setStyle({
+            top:  brick.top + 'px',
+            left: brick.left + 'px'
+        });
+        elem.setAttribute('data-hrb', brick.hrb);
+        
+        this._canvas.style.height = Math.max(
+                            parseInt(this._canvas.style.height) || 0,
+                            brick.top + brick.height) + 'px';
+        
+        this._bricks.push(brick);
     }
 };
