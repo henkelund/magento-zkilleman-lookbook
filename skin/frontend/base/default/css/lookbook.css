@@ -132,3 +132,29 @@ div.positioned-tag.active a {
 div.positioned-tag:hover {
     z-index: 999;
 }
+div.masonry div.wall div.brick {
+    padding: 5px;
+}
+div.masonry div.controls {
+    text-align: center;
+    padding: 4px;
+    min-height: 30px;
+}
+div.masonry div.controls button {
+    background: #0a263c;
+    color: #ebbc58;
+    border: 1px solid #0a263d;
+    border-radius: 5px;
+    box-shadow: 0 1px 0 #415966 inset;
+    padding: 4px;
+    min-width: 50%;
+}
+div.masonry div.controls button.disabled {
+    background: #ddd;
+    color: #888;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 1px 0 #eee inset;
+    padding: 4px;
+    min-width: 50%;
+}

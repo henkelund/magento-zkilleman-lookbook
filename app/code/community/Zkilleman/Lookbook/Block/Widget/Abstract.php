@@ -125,6 +125,12 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                         ->addFieldToFilter('t.name', array('in' => $tags))
                         ->distinct(true);
             }
+            if ($this->hasData('page_size')) {
+                $collection->setPageSize(abs((int) $this->getData('page_size')));
+            }
+            if ($this->hasData('cur_page')) {
+                $collection->setCurPage(abs((int) $this->getData('cur_page')));
+            }
             $this->setData('image_collection', $collection);
         }
         return $this->getData('image_collection');

@@ -27,33 +27,76 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 ?>
-<?php 
-    $images  = $this->getImageCollection();
-    $width   = $this->getWidth();
-    $cols    = 4;
-    $padding = 5;
-    $wall    = Mage::getModel('lookbook/masonry_brick', array('width' => $width));
-
-    foreach ($images as $image) {
-        $imageWidth = round($width/$cols) - 2*$padding;
-        $brick = Mage::getModel('lookbook/masonry_brick', array(
-            'width'       => $imageWidth + 2*$padding,
-            'height'      => $imageWidth*$image->getRatio() + 2*$padding,
-            'image'       => $image,
-            'image_width' => $imageWidth,
-            'padding'     => $padding
-            ));
-        $wall->append($brick);
-    }
-?>
-<div id="<?php echo $this->getHtmlId(); ?>"
-     class="masonry-canvas"
-     style="position: relative; <?php echo (string) $wall; ?>">
-<?php foreach ($wall->getChildren() as $brick): ?>
-    <div class="brick"
-         style="position: absolute; padding: <?php echo $padding; ?>px; <?php echo (string) $brick; ?>"
-         data-hrb="<?php echo $brick->getHighestRowBottom(); ?>">
-        <?php echo $brick->getImage()->getHtml($brick->getImageWidth()); ?>
+<div class="masonry">
+    <div id="<?php echo $this->getHtmlId(); ?>" class="wall"></div>
+    <div class="controls">
+        <button id="<?php echo $this->getHtmlId(); ?>_load">
+            <?php echo $this->__('Load more images'); ?>
+        </button>
     </div>
-<?php endforeach; ?>
 </div>
+<script type="text/javascript">
+//<![CDATA[
+
+    (function() {
+        
+        var masonry  = new LookbookMasonry('<?php echo $this->getHtmlId(); ?>'),
+            images   = <?php echo $this->getImagesJson(); ?>,
+            curPage  = 1,
+            lastPage = <?php echo $this->getImageCollection()->getLastPageNumber(); ?>;
+        
+        function appendBrick(content, animate)
+        {
+            var brick = new Element('div');
+            brick.addClassName('brick');
+            brick.insert(content);
+            masonry.append(brick, animate);
+            return brick;
+        }
+        
+        if (curPage == lastPage) {
+            $('<?php echo $this->getHtmlId(); ?>_load').hide();
+        };
+        
+        for (var i = 0; i < images.length; ++i) {
+            appendBrick(images[i], false);
+        }
+        
+        $('<?php echo $this->getHtmlId(); ?>_load').observe('click', function() {
+            
+            var button = Event.element(event);
+            if (button.hasClassName('disabled')) {
+                return;
+            }
+            button.addClassName('disabled');
+            button.update('<?php echo $this->__('Loading..'); ?>');
+            
+            var params = <?php echo $this->getAjaxParams(); ?>;
+            params.cur_page = ++curPage;
+            
+            var url = '<?php echo $this->getAjaxUrl(); ?>';
+            new Ajax.Request(url, {
+                parameters: params,
+                onSuccess: function(transport) {
+                    var images = transport.responseJSON;
+                    if (!typeof object == 'object' && (images instanceof Array)) {
+                        // alert('An error occured');
+                    } else {
+                        for (var i = 0; i < images.length; ++i) {
+                            appendBrick(images[i], true);
+                        }
+                    }
+                    if (curPage == lastPage) {
+                        $('<?php echo $this->getHtmlId(); ?>_load').fade();
+                    } else {
+                        button.removeClassName('disabled');
+                        button.update('<?php echo $this->__('Load more images'); ?>');
+                    }
+                }
+            });
+        });
+        
+    })();
+
+//]]>
+</script>

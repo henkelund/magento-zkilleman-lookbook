@@ -34,6 +34,18 @@
             <version>0.1.0.0</version>
         </Zkilleman_Lookbook>
     </modules>
+    
+    <frontend>
+        <routers>
+            <lookbook>
+                <use>standard</use>
+                <args>
+                    <module>Zkilleman_Lookbook</module>
+                    <frontName>lookbook</frontName>
+                </args>
+            </lookbook>
+        </routers>
+    </frontend>
 
     <admin>
         <routers>

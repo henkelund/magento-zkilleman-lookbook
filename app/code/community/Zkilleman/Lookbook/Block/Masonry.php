@@ -31,4 +31,85 @@ class Zkilleman_Lookbook_Block_Masonry
     extends Zkilleman_Lookbook_Block_Widget_Abstract
 {
     protected $_template = 'lookbook/masonry.phtml';
+    
+    /**
+     * Default theme 1column width
+     *
+     * @var int 
+     */
+    protected $_defaultPortraitWidth = 170;
+    
+    /**
+     * Width of portrait images
+     *
+     * @return int 
+     */
+    public function getPortraitWidth()
+    {
+        $width = $this->hasData('portrait_width') ?
+                    intval($this->getData('portrait_width')) :
+                    $this->_defaultPortraitWidth;
+        return (int) max(1, $width);
+    }
+    
+    /**
+     * Width of landscape images
+     *
+     * @return int 
+     */
+    public function getLandscapeWidth()
+    {
+        $width = $this->hasData('landscape_width') ?
+                    intval($this->getData('landscape_width')) :
+                    $this->getPortraitWidth();
+        return (int) max(1, $width);
+    }
+    
+    /**
+     * Image html json array
+     *
+     * @return string 
+     */
+    public function getImagesJson()
+    {
+        $images = $this->getImageCollection();
+        if (!$images) {
+            return '[]';
+        }
+        
+        $result = array();
+        foreach ($images as $image) {
+            $result[] = $image->getHtml(
+                            $image->isPortrait() ?
+                                $this->getPortraitWidth() :
+                                $this->getLandscapeWidth());
+        }
+        return Mage::helper('core')->jsonEncode($result);
+    }
+    
+    /**
+     * Url to masonry ajax controller
+     *
+     * @return string 
+     */
+    public function getAjaxUrl()
+    {
+        return $this->getUrl('lookbook/widget_masonry/images');
+    }
+    
+    /**
+     * Params for masonry controller
+     *
+     * @return string 
+     */
+    public function getAjaxParams()
+    {
+        $params = array(
+            'set_handle', 'tags', 'portrait_width', 'landscape_width', 'page_size'
+        );
+        $params = array_intersect_key(
+                            $this->getData(),
+                            array_combine($params, $params));
+        return Mage::helper('core')->jsonEncode($params);
+    }
 }

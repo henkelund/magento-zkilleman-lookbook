@@ -105,13 +105,27 @@
                 <type>text</type>
                 <description><![CDATA[Separate multiple tags with "|" (pipe).]]></description>
             </tags>
-            <width translate="label description">
+            <portrait_width translate="label description">
                 <required>0</required>
                 <visible>1</visible>
-                <label>Widget Width</label>
+                <label>Portrait Width</label>
                 <type>text</type>
-                <description><![CDATA[Widget width in pixels. Defaults to 900.]]></description>
-            </width>
+                <description><![CDATA[Width of portrait images in pixels. Defaults to 170.]]></description>
+            </portrait_width>
+            <landscape_width translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Landscape Width</label>
+                <type>text</type>
+                <description><![CDATA[Width of landscape images in pixels. Defaults to the value of "Portrait Width".]]></description>
+            </landscape_width>
+            <page_size translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Page Size</label>
+                <type>text</type>
+                <description><![CDATA[The number of images to load.]]></description>
+            </page_size>
         </parameters>
     </lookbook_masonry>
 </widgets>

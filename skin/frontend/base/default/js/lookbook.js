@@ -230,11 +230,12 @@ LookbookSlideshow.prototype = {
 var LookbookMasonry = Class.create();
 LookbookMasonry.prototype = {
     _canvas: null,
-    _bricks: [],
+    _bricks: null,
     initialize: function(canvas)
     {
         this._canvas = $(canvas);
         this._canvas.style.position = 'relative';
+        this._bricks = [];
         self = this;
         this._canvas.select('div.brick').each(function(elem) {
             self._bricks.push(self._createBrick(elem));
@@ -282,7 +283,11 @@ LookbookMasonry.prototype = {
         }
         return lower;
     },
-    append: function(elem)
+    getBrickCount: function()
+    {
+        return this._bricks.length;
+    },
+    append: function(elem, animate)
     {
         elem = $(elem);
         elem.setStyle({position: 'absolute'});
@@ -321,10 +326,27 @@ LookbookMasonry.prototype = {
         });
         elem.setAttribute('data-hrb', brick.hrb);
         
-        this._canvas.style.height = Math.max(
-                            parseInt(this._canvas.style.height) || 0,
-                            brick.top + brick.height) + 'px';
+        var canvasHeight = parseInt(this._canvas.style.maxHeight) || 0;
+        var brickBottom  = brick.top + brick.height;
+        if (brickBottom > canvasHeight) {
+            this._canvas.style.maxHeight = brickBottom + 'px';
+            Effect.Queues.get(this._canvas.identify()).invoke('cancel');
+            if (animate) {
+                new Effect.Morph(this._canvas, {
+                    duration: 0.5,
+                    queue: {scope: this._canvas.identify()},
+                    style: 'height: ' + brickBottom + 'px'
+                });
+            } else {
+                this._canvas.style.height = brickBottom + 'px';
+            }
+        }
         
         this._bricks.push(brick);
+        
+        if (animate) {
+            elem.hide();
+            elem.appear();
+        }
     }
 };
