@@ -33,7 +33,7 @@ class Zkilleman_Lookbook_Block_Masonry
     protected $_template = 'lookbook/masonry.phtml';
     
     /**
-     * Default theme 1column width
+     * Default portrait image width
      *
      * @var int 
      */

@@ -62,7 +62,7 @@
             appendBrick(images[i], false);
         }
         
-        $('<?php echo $this->getHtmlId(); ?>_load').observe('click', function() {
+        $('<?php echo $this->getHtmlId(); ?>_load').observe('click', function(event) {
             
             var button = Event.element(event);
             if (button.hasClassName('disabled')) {

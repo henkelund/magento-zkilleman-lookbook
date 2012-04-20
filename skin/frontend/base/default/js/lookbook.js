@@ -298,6 +298,8 @@ LookbookMasonry.prototype = {
             intersector,
             canvasWidth = this._canvas.bounds().width;
             
+        elem.hide();
+            
         for (var i = this._bricks.length - 1; i >= 0; --i) {
             if (brick.width >= this._bricks[i].width &&
                         brick.height >= this._bricks[i].height) {
@@ -345,8 +347,9 @@ LookbookMasonry.prototype = {
         this._bricks.push(brick);
         
         if (animate) {
-            elem.hide();
             elem.appear();
+        } else {
+            elem.show();
         }
     }
 };
