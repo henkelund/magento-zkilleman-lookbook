@@ -47,6 +47,7 @@ var LookbookSlideshow = Class.create();
 LookbookSlideshow.prototype = {
     _elem:     null,
     _items:    null,
+    _numFakes: null,
     _current:  -1,
     _interval: null,
     _options:  null,
@@ -55,24 +56,31 @@ LookbookSlideshow.prototype = {
         if (!(this._elem = $(id))) {
             return;
         }
-        this._items = this._elem.select('li.image');
+        this._items = this._elem.select('.item');
         if (!this._items.length) {
             return;
         }
+        this._numFakes = this._elem.select('.item.fake').length;
+        this._initOptions(options);
+        this._initEvents();
+        this.slide('right', 0);
+        this.start();
+    },
+    _initOptions: function(options)
+    {
         this._options = {
-            interval  : 5000,
-            direction : 'right',
-            fakes     : 2
+            interval       : 5000,
+            direction      : 'right',
+            effectDuration : 0.5
         };
         if (typeof options == 'object') {
             for (var key in options) {
                 this._options[key] = options[key];
             }
         }
-        this._initFakes();
-        this._initControls();
-        this.slide('right', 0);
-        this.start();
+    },
+    _initEvents: function()
+    {
         this._elem.observe('mouseover', this.stop.bind(this));
         this._elem.observe('mouseout', this.start.bind(this));
         var self = this;
@@ -86,91 +94,6 @@ LookbookSlideshow.prototype = {
             self.slide('left');
             self.start();
         });
-    },
-    _initControls: function()
-    {
-        var self = this;
-        this._elem.select('li.image').each(function(image) {
-            image.select('div.positioned-tag').each(function(tag) {
-                var y = tag.getAttribute('data-y');
-                var x = tag.getAttribute('data-x');
-                var bounds = tag.bounds();
-                y -= bounds.height/2;
-                x -= bounds.width/2;
-                tag.style.top  = parseInt(y) + 'px';
-                tag.style.left = parseInt(x) + 'px';
-            });
-            image.down('img').observe('mouseenter', function() {
-                image.select('div.positioned-tag').each(function(tag) {
-                    self._effect(
-                        tag,
-                        Effect.Appear,
-                        'tag-' + tag.getAttribute('data-id')
-                    );
-                });
-                var overlay = image.down('div.overlay');
-                self._effect(
-                    overlay,
-                    Effect.Morph,
-                    'overlay-' + image.getAttribute('data-id'),
-                    {style: 'bottom: -' + overlay.bounds().height + 'px'}
-                );
-            });
-            image.observe('mouseleave', function() {
-                image.select('div.positioned-tag').each(function(tag) {
-                    self._effect(
-                        tag,
-                        Effect.Fade,
-                        'tag-' + tag.getAttribute('data-id')
-                    );
-                });
-                self._effect(
-                    image.down('div.overlay'),
-                    Effect.Morph,
-                    'overlay-' + image.getAttribute('data-id'),
-                    {style: 'bottom: 0px'}
-                );
-            });
-        });
-    },
-    _initFakes: function()
-    {
-        var real,
-            fake,
-            numFakes = parseInt(this._options.fakes),
-            numItems = this._items.length;
-        for (var i = 0; i < numFakes; ++i) {
-            real = this._items[((numItems - 1) - i)%numItems];
-            fake = new Element('li')
-                        .addClassName('fake image')
-                        .update(real.innerHTML);
-            fake.setAttribute('data-id', real.getAttribute('data-id'));
-            this._elem.insert({top: fake});
-            real = this._items[i%numItems];
-            fake = new Element('li')
-                        .addClassName('fake image')
-                        .update(real.innerHTML);
-            fake.setAttribute('data-id', real.getAttribute('data-id'));
-            this._elem.insert({bottom: fake});
-        }
-    },
-    _effect: function(elem, effect, scope, options)
-    {
-        var defaultOptions = {
-            duration: 0.25
-        }
-        if (scope) {
-            defaultOptions.queue = {scope: scope};
-        }
-        if (typeof options == 'object') {
-            for (var key in options) {
-                defaultOptions[key] = options[key];
-            }
-        }
-        if (defaultOptions.queue && defaultOptions.queue.scope) {
-            Effect.Queues.get(defaultOptions.queue.scope).invoke('cancel');
-        }
-        new effect(elem, defaultOptions);
     },
     _targetOffset: function(item)
     {
@@ -186,27 +109,31 @@ LookbookSlideshow.prototype = {
             direction = 'right';
         }
         if (typeof duration == 'undefined') {
-            duration = 0.5;
+            duration = this._options.effectDuration;
         }
-        var numItems = this._items.length;
-        if (this._current != (this._current + numItems)%numItems) { // on a fake
-            this._current = (this._current + numItems)%numItems;
+        var numItems = this._items.length - this._numFakes;
+        var expectedCurrent =
+                        this._numFakes/2 +
+                        (this._current - this._numFakes/2 + numItems)%numItems;
+        if (this._current != expectedCurrent) { // on a fake
+            this._current = expectedCurrent;
             var realItem = this._items[this._current];
             this._elem.style.left = this._targetOffset(realItem) + 'px';
         }
         var item;
         if (direction == 'right') {
-            item = this._items[this._current++].next('li.image');
+            item = this._items[this._current++].next('.item');
         } else {
-            item = this._items[this._current--].previous('li.image');
+            item = this._items[this._current--].previous('.item');
         }
         var offset = this._targetOffset(item);
-        this._effect(
-            this._elem,
-            Effect.Move,
-            this._elem.getAttribute('id') + '-slide',
-            {x: offset, mode: 'absolute', duration: duration}
-        );
+        var elem = this._elem;
+        new Effect.Move(elem, {
+            queue: {scope: elem.identify()},
+            duration: duration,
+            x: offset,
+            mode: 'absolute'
+        });
     },
     start: function()
     {
@@ -226,6 +153,87 @@ LookbookSlideshow.prototype = {
         }
     }
 };
+
+var LookbookOverlayBarImage = Class.create();
+LookbookOverlayBarImage.prototype = {
+    _options: null,
+    _elem:    null,
+    _img:     null,
+    _bar:     null,
+    initialize: function(elem, options)
+    {
+        this._initOptions(options);
+        this._elem = $(elem);
+        this._elem.style = 'relative';
+        this._img = this._elem.down('img');
+        this._bar = this._elem.down('.bar');
+        this._initTags();
+        this._initEvents();
+    },
+    _initOptions: function(options)
+    {
+        this._options = {
+            effectDuration: 0.25
+        };
+        if (typeof options == 'object') {
+            for (var key in options) {
+                this._options[key] = options[key];
+            }
+        }
+    },
+    _initTags: function()
+    {
+        var imgBounds = this._img.bounds();
+        this._elem.select('.positioned-tag').each(function(tag) {
+            var y = parseFloat(tag.getAttribute('data-y'))*imgBounds.height;
+            var x = parseFloat(tag.getAttribute('data-x'))*imgBounds.width;
+            var bounds = tag.bounds();
+            y -= bounds.height/2;
+            x -= bounds.width/2;
+            tag.style.top  = parseInt(y) + 'px';
+            tag.style.left = parseInt(x) + 'px';
+            tag.hide();
+        });
+    },
+    _initEvents: function()
+    {
+        var elem = this._elem;
+        var bar = this._bar;
+        var tagsEffectScope = elem.identify() + '_tags';
+        var barEffectScope = elem.identify() + '_bar';
+        var duration = parseFloat(this._options.effectDuration);
+        this._img.observe('mouseenter', function() {
+            Effect.Queues.get(tagsEffectScope).invoke('cancel');
+            elem.select('.positioned-tag').each(function(tag) {
+                new Effect.Appear(tag, {
+                    queue: {scope: tagsEffectScope},
+                    duration: duration
+                });
+            });
+            Effect.Queues.get(barEffectScope).invoke('cancel');
+            new Effect.Morph(bar, {
+                queue: {scope: barEffectScope},
+                duration: duration,
+                style: 'bottom: -' + bar.bounds().height + 'px'
+            });
+        });
+        elem.observe('mouseleave', function() {
+            Effect.Queues.get(tagsEffectScope).invoke('cancel');
+            elem.select('.positioned-tag').each(function(tag) {
+                new Effect.Fade(tag, {
+                    queue: {scope: tagsEffectScope},
+                    duration: duration
+                });
+            });
+            Effect.Queues.get(barEffectScope).invoke('cancel');
+            new Effect.Morph(bar, {
+                queue: {scope: barEffectScope},
+                duration: duration,
+                style: 'bottom: 0px'
+            });
+        });
+    }
+}
 
 var LookbookMasonry = Class.create();
 LookbookMasonry.prototype = {

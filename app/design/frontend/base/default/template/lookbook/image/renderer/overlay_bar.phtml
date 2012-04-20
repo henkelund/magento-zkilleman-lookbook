@@ -1,0 +1,84 @@
+<?php
+/**
+ * Zkilleman_Lookbook
+ *
+ * Copyright (C) 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Lookbook.
+ *
+ * Zkilleman_Lookbook is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Lookbook is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Zkilleman_Lookbook. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @category Zkilleman
+ * @package Zkilleman_Lookbook
+ * @author Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license http://www.gnu.org/licenses/gpl.html GNU GPL
+ * @link https://github.com/henkelund/magento-zkilleman-lookbook
+ */
+?>
+<?php
+    $helper    = Mage::helper('lookbook');
+    $canFilter = Mage::getSingleton('lookbook/config')->isRequestTagsAllowed();
+    $bounds    = array();
+    $imageHtml =  $this->getImage()->getHtml(
+                        $this->getWidth(), $this->getHeight(), null, null, $bounds);
+    
+    $tagNames = array();
+    $positionedTags = array();
+    foreach ($this->getTags() as $tag) {
+        if ($tag->isInBounds($bounds)) {
+            $positionedTags[] = $tag;
+        }
+        $tagNames[] = $tag->getName();
+    }
+?>
+<div id="<?php echo $this->getNameInLayout(); ?>" class="overlay-bar-image">
+    <?php echo $imageHtml; ?>
+    <div class="bar">
+        <?php if (count($tagNames) > 0): ?>
+        <div class="tags">
+            <label><?php echo $this->__('Tags:'); ?></label>
+            <?php $tagHtml = array(); ?>
+            <?php foreach ($tagNames as $tagName): ob_start(); ?>
+            <span class="tag"><!--
+                --><?php if ($canFilter): ?><a href="<?php echo $helper->getTagUrl($tagName); ?>"><?php endif; ?><!--
+                    --><?php echo $tagName; ?><!--
+                --><?php if ($canFilter): ?></a><?php endif; ?><!--
+            --></span>
+            <?php $tagHtml[] = trim(ob_get_clean()); endforeach; ?>
+            <?php echo implode(', ', $tagHtml); ?>
+        </div>
+        <?php endif; ?>
+        <span class="title"><?php echo $this->getImage()->getTitle(); ?></span>
+        <p class="caption"><?php echo $this->getImage()->getCaption(); ?></p>
+    </div>
+    <?php foreach ($positionedTags as $tag): ?>
+    <div class="positioned-tag <?php echo $tag->getType(); ?>"
+            data-id="<?php echo $tag->getId(); ?>"
+            data-type="<?php echo $tag->getType(); ?>"
+            data-x="<?php echo $tag->getRelativeX($bounds); ?>"
+            data-y="<?php echo $tag->getRelativeY($bounds); ?>">
+        <?php if ($canFilter): ?>
+        <a href="<?php echo $helper->getTagUrl($tag); ?>"><?php echo $tag->getName(); ?></a>
+        <?php else: ?>
+        <?php echo $tag->getName(); ?>
+        <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+</div>
+<script type="text/javascript">
+//<![CDATA
+    new LookbookOverlayBarImage('<?php echo $this->getNameInLayout(); ?>');
+//]]>
+</script>

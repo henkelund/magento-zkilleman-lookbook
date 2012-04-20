@@ -28,75 +28,41 @@
  */
 ?>
 <?php
-    $images      = $this->getImageCollection();
-    $imageWidth  = $this->getWidth();
-    $imageHeight = $this->getHeight();
-    $helper      = Mage::helper('lookbook');
-    $canFilter   = Mage::getSingleton('lookbook/config')->isRequestTagsAllowed();
+    $items = $this->getImageBlocks();
+    // The item list is padded with fake items at the
+    // beginning and the end to achive a seamless loop.
+    // If the item width is much less than the slideshow
+    // width the number of fakes has to be increased.
+    // So, @todo Don't hard code $numFakes
+    $numFakes = 2;
+    if (count($items) > 0) {
+        for ($i = 0; $i < $numFakes; ++$i) {
+            $first = $items[$i*2];
+            $last = $items[count($items) - (($i*2) + 1)];
+            array_unshift($items, $last);
+            array_push($items, $first);
+        }
+    }
 ?>
 <div class="slideshow-wrapper">
     <ul id="<?php echo $this->getHtmlId(); ?>" class="slideshow"><!--
-    <?php foreach ($images as $image): ?>
-     --><li class="image" data-id="<?php echo $image->getId(); ?>">
-            <?php
-                $bounds = array();
-                $imgHtml = $image->getHtml(
-                                $imageWidth,  // width
-                                $imageHeight, // height
-                                null,         // element attributes
-                                null,         // style attributes
-                                $bounds);     // post crop bounds relative 
-                                              // to original aspect ratio
-                $tagNames = array();
-                $positionedTags = array();
-                // Loading a collection within a loop is never ideal
-                // Solution proposals:
-                //   * Rely on block cache
-                //   * Store serialized tag data on image table
-                //   * Custom tag cache
-                //   * Load tags with Ajax
-                foreach ($image->getTags() as $tag) {
-                    if ($tag->isInBounds($bounds)) {
-                        $positionedTags[] = $tag;
-                    }
-                    $tagNames[] = $tag->getName();
-                }
-            ?>
-         <?php echo $imgHtml; ?>
-            <div class="overlay">
-                <?php if (count($tagNames) > 0): ?>
-                <div class="tags">
-                    <label><?php echo $this->__('Tags:'); ?></label>
-                    <?php $tagHtml = array(); ?>
-                    <?php foreach ($tagNames as $tagName): ob_start(); ?>
-                    <span class="tag<?php if ($this->tagIsActive($tagName)): ?> active<?php endif; ?>"><!--
-                     --><?php if ($canFilter): ?><a href="<?php echo $helper->getTagUrl($tagName); ?>"><?php endif; ?><!--
-                         --><?php echo $tagName; ?><!--
-                     --><?php if ($canFilter): ?></a><?php endif; ?><!--
-                 --></span>
-                    <?php $tagHtml[] = trim(ob_get_clean()); endforeach; ?>
-                    <?php echo implode(', ', $tagHtml); ?>
-                </div>
-                <?php endif; ?>
-                <span class="title"><?php echo $image->getTitle(); ?></span>
-                <p class="caption"><?php echo $image->getCaption(); ?></p>
-            </div>
-            <?php foreach ($positionedTags as $tag): ?>
-            <div class="positioned-tag <?php echo $tag->getType(); ?><?php if ($this->tagIsActive($tag)): ?> active<?php endif; ?>"
-                 data-id="<?php echo $tag->getId(); ?>"
-                 data-type="<?php echo $tag->getType(); ?>"
-                 data-x="<?php echo intval($tag->getRelativeX($bounds)*$imageWidth); ?>"
-                 data-y="<?php echo intval($tag->getRelativeY($bounds)*$imageHeight); ?>"
-                 style="display: none;">
-                <?php if ($canFilter): ?>
-                <a href="<?php echo $helper->getTagUrl($tag); ?>"><?php echo $tag->getName(); ?></a>
-                <?php else: ?>
-                <?php echo $tag->getName(); ?>
-                <?php endif; ?>
-            </div>
-            <?php endforeach; ?>
+    <?php $i = 0; foreach ($items as $item): ?>
+        <?php
+            $isFake = $i < $numFakes || $i > (count($items) - $numFakes) - 1;
+            $itemHtml;
+            if ($isFake) {
+                $itemName = $item->getNameInLayout();
+                $item->setNameInLayout($itemName . '_fake');
+                $itemHtml = $item->toHtml();
+                $item->setNameInLayout($itemName);
+            } else {
+                $itemHtml = $item->toHtml();
+            }
+        ?>
+     --><li class="item<?php if ($isFake): ?> fake<?php endif; ?>">
+            <?php echo $itemHtml; ?>
         </li><!--
-    <?php endforeach; ?>
+    <?php ++$i; endforeach; ?>
  --></ul>
     <button class="previous" title="<?php echo $this->__('Previous'); ?>">&laquo;</button>
     <button class="next" title="<?php echo $this->__('Next'); ?>">&raquo;</button>

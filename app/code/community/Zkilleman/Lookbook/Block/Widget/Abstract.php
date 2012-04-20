@@ -76,6 +76,13 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     protected $_defaultHeight = '610:377';
     
     /**
+     * The default template for rendering images
+     *
+     * @var string 
+     */
+    protected $_defaultImageRenderer = 'lookbook/image/renderer/overlay_bar.phtml';
+    
+    /**
      * Counter used to produce unique identifiers for each widget instance
      *
      * @var int 
@@ -137,6 +144,72 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     }
     
     /**
+     *
+     *
+     * @return Zkilleman_Lookbook_Model_Resource_Image_Tag_Collection 
+     */
+    public function getImagesTagCollection()
+    {
+        if (!$this->hasData('image_tag_collection')) {
+            $imageCollection = $this->getImageCollection();
+            if (!$imageCollection) {
+                $this->setData('image_tag_collection', false);
+                return false;
+            }
+            $this->setData(
+                    'image_tag_collection',
+                    Mage::getModel('lookbook/image_tag')->getCollection()
+                            ->addFieldToFilter(
+                                    'image_id', 
+                                    array('in' => $imageCollection->getAllIds())));
+        }
+        return $this->getData('image_tag_collection');
+    }
+    
+    /**
+     *
+     * @param  Zkilleman_Lookbook_Model_Image $image
+     * @return array 
+     */
+    public function getImageTags(Zkilleman_Lookbook_Model_Image $image)
+    {
+        $tagCollection = $this->getImagesTagCollection();
+        if (!$tagCollection) {
+            return array();
+        }
+        return $tagCollection->getItemsByColumnValue('image_id', $image->getId());
+    }
+    
+    /**
+     *
+     * @return array 
+     */
+    public function getImageBlocks()
+    {
+        $blocks = array();
+        $imageCollection = $this->getImageCollection();
+        if (!$imageCollection) {
+            return $blocks;
+        }
+        $renderer = $this->hasData('image_renderer') ?
+                        $this->getData('image_renderer') :
+                        $this->_defaultImageRenderer;
+        foreach ($imageCollection as $image) {
+            $blocks[] = Mage::app()->getLayout()->createBlock(
+                            'core/template',
+                            $this->getHtmlId() . '_image_' . $image->getId(),
+                            array(
+                                'image'    => $image,
+                                'width'    => $this->_getImageBlockWidth($image),
+                                'height'   => $this->_getImageBlockHeight($image),
+                                'tags'     => $this->getImageTags($image),
+                                'template' => $renderer
+                            ));
+        }
+        return $blocks;
+    }
+    
+    /**
      * Widget config tags merged with user provided tags
      *
      * @return array
@@ -160,7 +233,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
      * @param  mixed Varien_Object|string
      * @return bool 
      */
-    public function tagIsActive($tag)
+    public function isTagActive($tag)
     {
         if ($tag instanceof Varien_Object) {
             $tag = $tag->getName();
@@ -208,6 +281,28 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
             }
         }
         return (int) min($this->_maxHeight, max($this->_minHeight, $height));
+    }
+    
+    /**
+     * Provides the width directive to be passed to image renderers
+     *
+     * @param  Zkilleman_Lookbook_Model_Image $image
+     * @return int 
+     */
+    protected function _getImageBlockWidth(Zkilleman_Lookbook_Model_Image $image)
+    {
+        return $this->getWidth();
+    }
+    
+    /**
+     * Provides the height directive to be passed to image renderers
+     *
+     * @param  Zkilleman_Lookbook_Model_Image $image
+     * @return int 
+     */
+    protected function _getImageBlockHeight(Zkilleman_Lookbook_Model_Image $image)
+    {
+        return $this->getHeight();
     }
     
     /**

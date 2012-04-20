@@ -35,13 +35,15 @@ ul.slideshow {
     white-space: nowrap;
 }
 ul.slideshow li {
-    border: 1px solid #0a263d;
     display: inline-block;
-    position: relative;
     margin: 0 5px;
+}
+div.overlay-bar-image {
+    border: 1px solid #0a263d;
+    position: relative;
     overflow: hidden;
 }
-ul.slideshow li div.overlay {
+div.overlay-bar-image div.bar {
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -55,29 +57,29 @@ ul.slideshow li div.overlay {
     line-height: 1em;
     margin: 0;
 }
-ul.slideshow li div.overlay div.tags {
+div.overlay-bar-image div.bar div.tags {
     float: right;
     margin-right: 10px;
     font-size: 0.8em;
     line-height: 1em;
 }
-ul.slideshow li div.overlay div.tags span.tag {
+div.overlay-bar-image div.bar div.tags span.tag {
     color: #ebbc58;
 }
-ul.slideshow li div.overlay div.tags span.tag a {
+div.overlay-bar-image div.bar div.tags span.tag a {
     color: #ebbc58;
     text-decoration: none;
 }
-ul.slideshow li div.overlay div.tags span.tag.active a {
+div.overlay-bar-image div.bar div.tags span.tag.active a {
     text-decoration: underline;
 }
-ul.slideshow li div.overlay span.title {
+div.overlay-bar-image div.bar span.title {
     margin-left: 10px;
     color: #a7c6dd;
     font-weight: bold;
 }
-ul.slideshow li div.overlay p.caption {
-    margin: 2px 10px;
+div.overlay-bar-image div.bar p.caption {
+    margin: 4px 10px;
     font-style: italic;
     white-space: normal;
 }
