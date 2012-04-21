@@ -80,7 +80,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
      *
      * @var string 
      */
-    protected $_defaultImageRenderer = 'lookbook/image/renderer/overlay_bar.phtml';
+    protected $_defaultImageRenderer = 'lookbook/image/renderer/default.phtml';
     
     /**
      * Counter used to produce unique identifiers for each widget instance

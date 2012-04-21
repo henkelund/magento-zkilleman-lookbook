@@ -47,6 +47,23 @@
                 <type>text</type>
                 <description><![CDATA[Separate multiple tags with "|" (pipe).]]></description>
             </tags>
+            <image_renderer translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Image Display Mode</label>
+                <type>select</type>
+                <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
+                <values>
+                    <default translate="label">
+                        <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
+                        <label>Default</label>
+                    </default>
+                    <overlay_bar translate="label">
+                        <value><![CDATA[lookbook/image/renderer/overlay_bar.phtml]]></value>
+                        <label>Overlay Bar</label>
+                    </overlay_bar>
+                </values>
+            </image_renderer>
             <width translate="label description">
                 <required>0</required>
                 <visible>1</visible>
@@ -105,6 +122,23 @@
                 <type>text</type>
                 <description><![CDATA[Separate multiple tags with "|" (pipe).]]></description>
             </tags>
+            <image_renderer translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Image Display Mode</label>
+                <type>select</type>
+                <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
+                <values>
+                    <default translate="label">
+                        <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
+                        <label>Default</label>
+                    </default>
+                    <overlay_bar translate="label">
+                        <value><![CDATA[lookbook/image/renderer/overlay_bar.phtml]]></value>
+                        <label>Overlay Bar</label>
+                    </overlay_bar>
+                </values>
+            </image_renderer>
             <portrait_width translate="label description">
                 <required>0</required>
                 <visible>1</visible>
