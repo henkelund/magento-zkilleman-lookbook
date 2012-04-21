@@ -76,7 +76,10 @@
                 <visible>1</visible>
                 <label>Image Height</label>
                 <type>text</type>
-                <description><![CDATA[Pixel value or ratio (i.e. '16:9'). Defaults to the Golden Ratio.]]></description>
+                <description><![CDATA[
+                    Pixel value or ratio (i.e. '16:9').
+                    Defaults to the Golden Ratio.
+                    ]]></description>
             </height>
             <direction translate="label">
                 <required>0</required>
@@ -144,15 +147,32 @@
                 <visible>1</visible>
                 <label>Portrait Width</label>
                 <type>text</type>
-                <description><![CDATA[Width of portrait images in pixels. Defaults to 170.]]></description>
+                <description><![CDATA[
+                    Width of portrait images in pixels. Defaults to 170.
+                    ]]></description>
             </portrait_width>
             <landscape_width translate="label description">
                 <required>0</required>
                 <visible>1</visible>
                 <label>Landscape Width</label>
                 <type>text</type>
-                <description><![CDATA[Width of landscape images in pixels. Defaults to the value of "Portrait Width".]]></description>
+                <description><![CDATA[
+                    Width of landscape images in pixels.
+                    Defaults to the value of "Portrait Width".
+                    ]]></description>
             </landscape_width>
+            <image_area translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Image Area</label>
+                <type>text</type>
+                <description><![CDATA[
+                    Image area in pixels.
+                    Useful if your images have a range of different ratios and you
+                    want them to be equal in size.
+                    This option overrides the width options.
+                    ]]></description>
+            </image_area>
             <page_size translate="label description">
                 <required>0</required>
                 <visible>1</visible>

@@ -40,6 +40,13 @@ class Zkilleman_Lookbook_Block_Masonry
     protected $_defaultPortraitWidth = 170;
     
     /**
+     * Minium image area
+     *
+     * @var int 
+     */
+    protected $_minArea = 1000;
+    
+    /**
      * Width of portrait images
      *
      * @return int 
@@ -92,8 +99,13 @@ class Zkilleman_Lookbook_Block_Masonry
      */
     protected function _getImageBlockWidth(Zkilleman_Lookbook_Model_Image $image)
     {
-        return $image->isPortrait() ?
+        if ($this->hasData('image_area') && $image->getRatio() > 0) {
+            $area = max($this->_minArea, $this->getData('image_area'));
+            return round(sqrt($area/$image->getRatio()));
+        } else {
+            return $image->isPortrait() ?
                             $this->getPortraitWidth() : $this->getLandscapeWidth();
+        }
     }
     
     /**
@@ -125,7 +137,13 @@ class Zkilleman_Lookbook_Block_Masonry
     public function getAjaxParams()
     {
         $params = array(
-            'set_handle', 'tags', 'portrait_width', 'landscape_width', 'page_size'
+            'set_handle',
+            'tags',
+            'image_renderer',
+            'portrait_width',
+            'landscape_width',
+            'image_area',
+            'page_size'
         );
         $params = array_intersect_key(
                             $this->getData(),
