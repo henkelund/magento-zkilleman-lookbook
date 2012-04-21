@@ -72,19 +72,39 @@ class Zkilleman_Lookbook_Block_Masonry
      */
     public function getImagesJson()
     {
-        $images = $this->getImageCollection();
+        $images = $this->getImageBlocks();
         if (!$images) {
             return '[]';
         }
         
         $result = array();
         foreach ($images as $image) {
-            $result[] = $image->getHtml(
-                            $image->isPortrait() ?
-                                $this->getPortraitWidth() :
-                                $this->getLandscapeWidth());
+            $result[] = $image->toHtml();
         }
         return Mage::helper('core')->jsonEncode($result);
+    }
+    
+    /**
+     * Provides the width directive to be passed to image renderers
+     *
+     * @param  Zkilleman_Lookbook_Model_Image $image
+     * @return int 
+     */
+    protected function _getImageBlockWidth(Zkilleman_Lookbook_Model_Image $image)
+    {
+        return $image->isPortrait() ?
+                            $this->getPortraitWidth() : $this->getLandscapeWidth();
+    }
+    
+    /**
+     * Provides the height directive to be passed to image renderers
+     *
+     * @param  Zkilleman_Lookbook_Model_Image $image
+     * @return int 
+     */
+    protected function _getImageBlockHeight(Zkilleman_Lookbook_Model_Image $image)
+    {
+        return null;
     }
     
     /**

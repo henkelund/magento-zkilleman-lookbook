@@ -39,7 +39,6 @@ ul.slideshow li {
     margin: 0 5px;
 }
 div.overlay-bar-image {
-    border: 1px solid #0a263d;
     position: relative;
     overflow: hidden;
 }

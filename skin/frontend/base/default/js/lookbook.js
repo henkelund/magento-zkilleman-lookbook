@@ -237,10 +237,12 @@ LookbookOverlayBarImage.prototype = {
 
 var LookbookMasonry = Class.create();
 LookbookMasonry.prototype = {
+    _options: null,
     _canvas: null,
     _bricks: null,
-    initialize: function(canvas)
+    initialize: function(canvas, options)
     {
+        this._initOptions(options);
         this._canvas = $(canvas);
         this._canvas.style.position = 'relative';
         this._bricks = [];
@@ -248,6 +250,19 @@ LookbookMasonry.prototype = {
         this._canvas.select('div.brick').each(function(elem) {
             self._bricks.push(self._createBrick(elem));
         });
+    },
+    _initOptions: function(options)
+    {
+        this._options = {
+            effectDuration : 0.5,
+            beforeLayout   : function(masonry, brick) { return brick; },
+            afterLayout    : function(masonry, brick) { return brick; }
+        };
+        if (typeof options == 'object') {
+            for (var key in options) {
+                this._options[key] = options[key];
+            }
+        }
     },
     _createBrick: function(elem)
     {
@@ -305,9 +320,9 @@ LookbookMasonry.prototype = {
             lowerBricks,
             intersector,
             canvasWidth = this._canvas.bounds().width;
-            
-        elem.hide();
-            
+        
+        brick = this._options.beforeLayout(this, brick);
+        
         for (var i = this._bricks.length - 1; i >= 0; --i) {
             if (brick.width >= this._bricks[i].width &&
                         brick.height >= this._bricks[i].height) {
@@ -336,14 +351,17 @@ LookbookMasonry.prototype = {
         });
         elem.setAttribute('data-hrb', brick.hrb);
         
+        brick = this._options.afterLayout(this, brick);
+        
         var canvasHeight = parseInt(this._canvas.style.maxHeight) || 0;
         var brickBottom  = brick.top + brick.height;
         if (brickBottom > canvasHeight) {
             this._canvas.style.maxHeight = brickBottom + 'px';
             Effect.Queues.get(this._canvas.identify()).invoke('cancel');
             if (animate) {
+                var duration = this._options.effectDuration;
                 new Effect.Morph(this._canvas, {
-                    duration: 0.5,
+                    duration: duration,
                     queue: {scope: this._canvas.identify()},
                     style: 'height: ' + brickBottom + 'px'
                 });
@@ -355,9 +373,10 @@ LookbookMasonry.prototype = {
         this._bricks.push(brick);
         
         if (animate) {
-            elem.appear();
-        } else {
-            elem.show();
+            elem.setStyle({opacity: 0});
+            new Effect.Appear(elem, {duration: this._options.effectDuration});
         }
+        
+        return brick;
     }
 };
