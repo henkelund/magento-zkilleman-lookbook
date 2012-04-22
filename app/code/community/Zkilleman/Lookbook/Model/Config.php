@@ -30,6 +30,7 @@
 class Zkilleman_Lookbook_Model_Config
 {
     const XML_PATH_TAG_TYPES        = 'global/lookbook/image/tag/types';
+    const XML_PATH_IMAGE_RENDERERS  = 'global/lookbook/image/renderer';
     const XML_PATH_ALLOW_PARAM_TAGS = 'cms/lookbook/allow_param_tags';
     const XML_PATH_TAGS_PARAM_NAME  = 'cms/lookbook/tags_param_name';
     const XML_PATH_MAX_PARAM_TAGS   = 'cms/lookbook/max_param_tags';
@@ -39,6 +40,12 @@ class Zkilleman_Lookbook_Model_Config
      * @var array
      */
     protected static $_tagTypes = null;
+    
+    /**
+     *
+     * @var array 
+     */
+    protected static $_imageRenderers = null;
     
     public function _loadTagTypes()
     {
@@ -83,6 +90,45 @@ class Zkilleman_Lookbook_Model_Config
     {
         $this->_loadTagTypes();
         return isset(self::$_tagTypes[$key]) ? self::$_tagTypes[$key] : null;
+    }
+    
+    /**
+     *
+     * @return array 
+     */
+    public function getImageRenderers()
+    {
+        if (self::$_imageRenderers === null) {
+            $renderers = Mage::getConfig()
+                                ->getNode(self::XML_PATH_IMAGE_RENDERERS)->asArray();
+            foreach ($renderers as $key => $renderer) {
+                $renderers[$key]['key'] = $key;
+                $attrs  = isset($renderer['@']) ? $renderer['@'] : array();
+                $module = isset($attrs['module']) ? $attrs['module'] : 'lookbook';
+                $renderers[$key]['module'] = $module;
+                $helper = Mage::helper($module);
+                $renderers[$key]['title'] = $helper->__(
+                                                isset($renderer['title']) ?
+                                                    $renderer['title'] : $key);
+                if (!isset($renderer['block'])) {
+                    $renderers[$key]['block'] =
+                                    sprintf('%s/image_renderer_%s', $module, $key);
+                }
+            }
+            self::$_imageRenderers = $renderers;
+        }
+        return self::$_imageRenderers;
+    }
+    
+    /**
+     *
+     * @param  string $name 
+     * @return mixed array|false
+     */
+    public function getImageRenderer($name)
+    {
+        $renderers = $this->getImageRenderers();
+        return isset($renderers[$name]) ? $renderers[$name] : false;
     }
     
     /**

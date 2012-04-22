@@ -26,14 +26,29 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
-?>
-<?php
-    echo $this->getImage()->getHtml(
-                    $this->getWidth(),
-                    $this->getHeight(),
-                    array(
-                        'id'    => $this->getNameInLayout(),
-                        'title' => $this->getImage()->getTitle(),
-                        'alt'   => $this->getImage()->getCaption()
-                    ));
-?>
+
+class Zkilleman_Lookbook_Block_Image_Renderer_Default
+            extends Zkilleman_Lookbook_Block_Image_Renderer_Abstract
+{
+    /**
+     * Prepare image attributes
+     * 
+     */
+    protected function _beforeGetImageHtml()
+    {
+        $this->_imageAttributes = array(
+            'id'    => $this->getHtmlId(),
+            'title' => $this->getTitle(),
+            'alt'   => $this->getCaption()
+        );
+    }
+    
+    /**
+     *
+     * @return string 
+     */
+    protected function _toHtml()
+    {
+        return $this->getImageHtml();
+    }
+}

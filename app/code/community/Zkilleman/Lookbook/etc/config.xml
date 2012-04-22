@@ -149,6 +149,20 @@
                         </cmsblock-->
                     </types>
                 </tag>
+                <renderer>
+                    <default>
+                        <title>Default</title>
+                        <block>lookbook/image_renderer_default</block>
+                    </default>
+                    <overlay_bar>
+                        <title>Overlay Bar</title>
+                        <block>lookbook/image_renderer_overlaybar</block>
+                    </overlay_bar>
+                    <popup>
+                        <title>Pop Up</title>
+                        <block>lookbook/image_renderer_popup</block>
+                    </popup>
+                </renderer>
             </image>
         </lookbook>
     </global>

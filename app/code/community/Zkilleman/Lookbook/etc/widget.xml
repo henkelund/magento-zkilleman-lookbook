@@ -52,21 +52,8 @@
                 <visible>1</visible>
                 <label>Image Display Mode</label>
                 <type>select</type>
-                <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
-                <values>
-                    <default translate="label">
-                        <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
-                        <label>Default</label>
-                    </default>
-                    <overlay_bar translate="label">
-                        <value><![CDATA[lookbook/image/renderer/overlay_bar.phtml]]></value>
-                        <label>Overlay Bar</label>
-                    </overlay_bar>
-                    <popup translate="label">
-                        <value><![CDATA[lookbook/image/renderer/popup.phtml]]></value>
-                        <label>Pop Up</label>
-                    </popup>
-                </values>
+                <value>default</value>
+                <source_model>lookbook/config_source_imagerenderers</source_model>
             </image_renderer>
             <width translate="label description">
                 <required>0</required>
@@ -134,21 +121,8 @@
                 <visible>1</visible>
                 <label>Image Display Mode</label>
                 <type>select</type>
-                <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
-                <values>
-                    <default translate="label">
-                        <value><![CDATA[lookbook/image/renderer/default.phtml]]></value>
-                        <label>Default</label>
-                    </default>
-                    <overlay_bar translate="label">
-                        <value><![CDATA[lookbook/image/renderer/overlay_bar.phtml]]></value>
-                        <label>Overlay Bar</label>
-                    </overlay_bar>
-                    <popup translate="label">
-                        <value><![CDATA[lookbook/image/renderer/popup.phtml]]></value>
-                        <label>Pop Up</label>
-                    </popup>
-                </values>
+                <value>default</value>
+                <source_model>lookbook/config_source_imagerenderers</source_model>
             </image_renderer>
             <portrait_width translate="label description">
                 <required>0</required>

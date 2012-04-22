@@ -80,7 +80,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
      *
      * @var string 
      */
-    protected $_defaultImageRenderer = 'lookbook/image/renderer/default.phtml';
+    protected $_defaultImageRenderer = 'default';
     
     /**
      * Counter used to produce unique identifiers for each widget instance
@@ -194,16 +194,18 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
         $renderer = $this->hasData('image_renderer') ?
                         $this->getData('image_renderer') :
                         $this->_defaultImageRenderer;
+        $rendererInfo = Mage::getSingleton('lookbook/config')
+                                        ->getImageRenderer($renderer);
+        
         foreach ($imageCollection as $image) {
             $blocks[] = Mage::app()->getLayout()->createBlock(
-                            'core/template',
+                            $rendererInfo['block'],
                             $this->getHtmlId() . '_image_' . $image->getId(),
                             array(
                                 'image'    => $image,
                                 'width'    => $this->_getImageBlockWidth($image),
                                 'height'   => $this->_getImageBlockHeight($image),
-                                'tags'     => $this->getImageTags($image),
-                                'template' => $renderer
+                                'tags'     => $this->getImageTags($image)
                             ));
         }
         return $blocks;

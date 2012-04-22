@@ -30,45 +30,34 @@
 <?php
     $helper    = Mage::helper('lookbook');
     $canFilter = Mage::getSingleton('lookbook/config')->isRequestTagsAllowed();
-    $bounds    = array();
-    $imageHtml =  $this->getImage()->getHtml(
-                        $this->getWidth(), $this->getHeight(), null, null, $bounds);
-    
-    $tagNames = array();
-    $positionedTags = array();
-    foreach ($this->getTags() as $tag) {
-        if ($tag->isInBounds($bounds)) {
-            $positionedTags[] = $tag;
-        }
-        $tagNames[] = $tag->getName();
-    }
+    $imageHtml = $this->getImageHtml();
 ?>
-<div id="<?php echo $this->getNameInLayout(); ?>" class="overlay-bar-image">
+<div id="<?php echo $this->getHtmlId(); ?>" class="overlay-bar-image">
     <?php echo $imageHtml; ?>
     <div class="bar">
-        <?php if (count($tagNames) > 0): ?>
+        <?php if ($this->hasTags()): ?>
         <div class="tags">
             <label><?php echo $this->__('Tags:'); ?></label>
             <?php $tagHtml = array(); ?>
-            <?php foreach ($tagNames as $tagName): ob_start(); ?>
+            <?php foreach ($this->getTags() as $tag): ob_start(); ?>
             <span class="tag"><!--
-                --><?php if ($canFilter): ?><a href="<?php echo $helper->getTagUrl($tagName); ?>"><?php endif; ?><!--
-                    --><?php echo $tagName; ?><!--
+                --><?php if ($canFilter): ?><a href="<?php echo $helper->getTagUrl($tag->getName()); ?>"><?php endif; ?><!--
+                    --><?php echo $tag->getName(); ?><!--
                 --><?php if ($canFilter): ?></a><?php endif; ?><!--
             --></span>
             <?php $tagHtml[] = trim(ob_get_clean()); endforeach; ?>
             <?php echo implode(', ', $tagHtml); ?>
         </div>
         <?php endif; ?>
-        <span class="title"><?php echo $this->getImage()->getTitle(); ?></span>
-        <p class="caption"><?php echo $this->getImage()->getCaption(); ?></p>
+        <span class="title"><?php echo $this->getTitle(); ?></span>
+        <p class="caption"><?php echo $this->getCaption(); ?></p>
     </div>
-    <?php foreach ($positionedTags as $tag): ?>
+    <?php foreach ($this->getPositionedTags() as $tag): ?>
     <div class="positioned-tag <?php echo $tag->getType(); ?>"
             data-id="<?php echo $tag->getId(); ?>"
             data-type="<?php echo $tag->getType(); ?>"
-            data-x="<?php echo $tag->getRelativeX($bounds); ?>"
-            data-y="<?php echo $tag->getRelativeY($bounds); ?>">
+            data-x="<?php echo $tag->getRelX(); ?>"
+            data-y="<?php echo $tag->getRelY(); ?>">
         <?php if ($canFilter): ?>
         <a href="<?php echo $helper->getTagUrl($tag); ?>"><?php echo $tag->getName(); ?></a>
         <?php else: ?>
@@ -79,6 +68,6 @@
 </div>
 <script type="text/javascript">
 //<![CDATA
-    new LookbookOverlayBarImage('<?php echo $this->getNameInLayout(); ?>');
+    new LookbookOverlayBarImage('<?php echo $this->getHtmlId(); ?>');
 //]]>
 </script>

@@ -26,21 +26,20 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
-?>
-<?php echo $this->getImageHtml(); ?>
-<div id="<?php echo $this->getPopupHtmlId(); ?>"
-     class="lookbook-popup block"
-     style="display: none;">
-    <div class="block-title"><strong><?php echo $this->getTitle(); ?></strong></div>
-    <div class="block-content" style="width: <?php echo $this->getPopupWidth(true); ?>px;">
-        <?php echo $this->getPopupImageHtml(); ?>
-        <p class="caption"><?php echo $this->getCaption(); ?></p>
-    </div>
-</div>
-<script type="text/javascript">
-//<![CDATA[
-    new LookbookPopupImage(
-            '<?php echo $this->getHtmlId(); ?>',
-            '<?php echo $this->getPopupHtmlId(); ?>');
-//]]>
-</script>
+
+class Zkilleman_Lookbook_Model_Config_Source_Imagerenderers
+{
+    /**
+     *
+     * @return array 
+     */
+    public function toOptionArray()
+    {
+        $options = array();
+        foreach (Mage::getSingleton('lookbook/config')
+                        ->getImageRenderers() as $renderer){
+            $options[$renderer['key']] = $renderer['title'];
+        }
+        return $options;
+    }
+}

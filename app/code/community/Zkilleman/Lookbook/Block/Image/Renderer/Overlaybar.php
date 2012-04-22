@@ -26,21 +26,13 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
-?>
-<?php echo $this->getImageHtml(); ?>
-<div id="<?php echo $this->getPopupHtmlId(); ?>"
-     class="lookbook-popup block"
-     style="display: none;">
-    <div class="block-title"><strong><?php echo $this->getTitle(); ?></strong></div>
-    <div class="block-content" style="width: <?php echo $this->getPopupWidth(true); ?>px;">
-        <?php echo $this->getPopupImageHtml(); ?>
-        <p class="caption"><?php echo $this->getCaption(); ?></p>
-    </div>
-</div>
-<script type="text/javascript">
-//<![CDATA[
-    new LookbookPopupImage(
-            '<?php echo $this->getHtmlId(); ?>',
-            '<?php echo $this->getPopupHtmlId(); ?>');
-//]]>
-</script>
+
+class Zkilleman_Lookbook_Block_Image_Renderer_Overlaybar
+            extends Zkilleman_Lookbook_Block_Image_Renderer_Abstract
+{
+    /**
+     *
+     * @var string
+     */
+    protected $_template = 'lookbook/image/renderer/overlay_bar.phtml';
+}
