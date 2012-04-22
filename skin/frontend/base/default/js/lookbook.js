@@ -235,6 +235,91 @@ LookbookOverlayBarImage.prototype = {
     }
 }
 
+var LookbookPopupImage = Class.create();
+LookbookPopupImage.prototype = {
+    _elem: null,
+    _popup: null,
+    _timeout: null,
+    initialize: function(elem, popup, options)
+    {
+        this._elem  = $(elem);
+        this._popup = $(popup);
+        this._popup.hide();
+        this._popup.remove();
+        this._popup.setStyle({position: 'absolute'});
+        $(document.getElementsByTagName('body')[0]).insert(this._popup);
+        this._initOptions(options);
+        this._initEvents();
+    },
+    _initOptions: function(options)
+    {
+        this._options = {
+            delay          : 100,
+            effectDuration : 0.25
+        };
+        if (typeof options == 'object') {
+            for (var key in options) {
+                this._options[key] = options[key];
+            }
+        }
+    },
+    _initEvents: function()
+    {
+        var self = this;
+        var popupFunc = this.popup.bind(this);
+        this._elem.observe('mouseenter', function() {
+            self._timeout = window.setTimeout(popupFunc, self._options.delay);
+        });
+        this._elem.observe('mouseleave', function() {
+            window.clearTimeout(self._timeout);
+        });
+        this._popup.observe('mouseleave', this._popup.hide.bind(this._popup));
+    },
+    popup: function()
+    {
+        this._popup.show();
+        var self = this;
+        var wWidth = window.innerWidth ||
+                      (window.document.documentElement.clientWidth ||
+                       window.document.body.clientWidth);
+        var pBounds = this._popup.bounds();
+        var eBounds = this._elem.bounds();
+        var top = parseInt(eBounds.top - (pBounds.height - eBounds.height)/2);
+        var left = parseInt(eBounds.left - (pBounds.width - eBounds.width)/2);
+        var minTop = 0;
+        var minLeft = 0;
+        var maxLeft = wWidth - pBounds.width;
+        var effectScope = this._popup.identify();
+        
+        this._popup.setStyle({
+            top: top + 'px',
+            left: left + 'px'
+        });
+        
+        if (top < minTop || left < minLeft || left > maxLeft) {
+            
+            if (top < minTop) {
+                top = parseInt(minTop);
+            }
+            
+            if ((left < minLeft && left > maxLeft) || pBounds.width > wWidth) {
+                left = parseInt((minLeft + maxLeft)/2);
+            } else if (left < minLeft) {
+                left = parseInt(minLeft);
+            } else if (left > maxLeft) {
+                left = parseInt(maxLeft);
+            }
+        
+            Effect.Queues.get(effectScope).invoke('cancel');
+            new Effect.Morph(this._popup, {
+                queue    : {scope: effectScope},
+                duration : self._options.effectDuration,
+                style    : 'top: ' + top + 'px; left: ' + left + 'px;'
+            });
+        }
+    }
+};
+
 var LookbookMasonry = Class.create();
 LookbookMasonry.prototype = {
     _options: null,

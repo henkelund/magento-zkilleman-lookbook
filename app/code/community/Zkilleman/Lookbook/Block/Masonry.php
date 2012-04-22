@@ -137,6 +137,7 @@ class Zkilleman_Lookbook_Block_Masonry
     public function getAjaxParams()
     {
         $params = array(
+            'html_id',
             'set_handle',
             'tags',
             'image_renderer',

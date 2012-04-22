@@ -62,6 +62,10 @@
                         <value><![CDATA[lookbook/image/renderer/overlay_bar.phtml]]></value>
                         <label>Overlay Bar</label>
                     </overlay_bar>
+                    <popup translate="label">
+                        <value><![CDATA[lookbook/image/renderer/popup.phtml]]></value>
+                        <label>Pop Up</label>
+                    </popup>
                 </values>
             </image_renderer>
             <width translate="label description">
@@ -140,6 +144,10 @@
                         <value><![CDATA[lookbook/image/renderer/overlay_bar.phtml]]></value>
                         <label>Overlay Bar</label>
                     </overlay_bar>
+                    <popup translate="label">
+                        <value><![CDATA[lookbook/image/renderer/popup.phtml]]></value>
+                        <label>Pop Up</label>
+                    </popup>
                 </values>
             </image_renderer>
             <portrait_width translate="label description">

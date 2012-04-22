@@ -26,18 +26,6 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 
-div.slideshow-wrapper {
-    position: relative;
-    overflow: hidden;
-}
-ul.slideshow {
-    position: relative;
-    white-space: nowrap;
-}
-ul.slideshow li {
-    display: inline-block;
-    margin: 0 5px;
-}
 div.overlay-bar-image {
     position: relative;
     overflow: hidden;
@@ -81,6 +69,35 @@ div.overlay-bar-image div.bar p.caption {
     margin: 4px 10px;
     font-style: italic;
     white-space: normal;
+}
+div.lookbook-popup {
+    position: absolute;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+    z-index: 999;
+    text-align: left;
+    line-height: 1.25em;
+}
+div.lookbook-popup img {
+    display: block;
+}
+div.lookbook-popup div.block-content {
+    padding: 5px 10px;
+}
+div.lookbook-popup p.caption {
+    margin: 0;
+    font-size: 11px;
+}
+div.slideshow-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+ul.slideshow {
+    position: relative;
+    white-space: nowrap;
+}
+ul.slideshow li {
+    display: inline-block;
+    margin: 0 5px;
 }
 div.slideshow-wrapper button {
     position: absolute;

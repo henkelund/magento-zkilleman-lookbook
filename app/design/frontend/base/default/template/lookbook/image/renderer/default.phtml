@@ -32,6 +32,7 @@
                     $this->getWidth(),
                     $this->getHeight(),
                     array(
+                        'id'    => $this->getNameInLayout(),
                         'title' => $this->getImage()->getTitle(),
                         'alt'   => $this->getImage()->getCaption()
                     ));

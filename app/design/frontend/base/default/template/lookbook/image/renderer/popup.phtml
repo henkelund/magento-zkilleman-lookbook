@@ -1,0 +1,69 @@
+<?php
+/**
+ * Zkilleman_Lookbook
+ *
+ * Copyright (C) 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ *
+ * This file is part of Zkilleman_Lookbook.
+ *
+ * Zkilleman_Lookbook is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Zkilleman_Lookbook is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Zkilleman_Lookbook. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @category Zkilleman
+ * @package Zkilleman_Lookbook
+ * @author Henrik Hedelund <henke.hedelund@gmail.com>
+ * @copyright 2012 Henrik Hedelund (henke.hedelund@gmail.com)
+ * @license http://www.gnu.org/licenses/gpl.html GNU GPL
+ * @link https://github.com/henkelund/magento-zkilleman-lookbook
+ */
+?>
+<?php
+    $image   = $this->getImage();
+    $title   = $image->getTitle();
+    $caption = $image->getCaption();
+    $width   = $this->getWidth();
+    $height  = $this->getHeight();
+    $htmlId  = $this->getNameInLayout();
+    // @todo Don't hard code zoom value.
+    // To fix it we need a way to admin properties for image renderers.
+    $zoom    = 1.5;
+    
+    $imageHtml = $image->getHtml($width, $height, array(
+                        'id' => $htmlId, 'alt'   => $caption));
+    
+    $popupWidth = $width ? round($width*$zoom) : null;
+    $popupHeight = $height ? round($height*$zoom) : null;
+    
+    $popupImageHtml = $image->getHtml($popupWidth, $popupHeight);
+    
+    if (!$popupWidth) {
+        $popupWidth = $popupHeight ?
+                            round($popupHeight/$image->getRatio()) :
+                            $image->createImageObject()->getOriginalWidth();
+    }
+?>
+<?php echo $imageHtml; ?>
+<div id="<?php echo $htmlId; ?>_popup"
+     class="lookbook-popup block"
+     style="display: none;">
+    <div class="block-title"><strong><?php echo $title; ?></strong></div>
+    <div class="block-content" style="width: <?php echo $popupWidth; ?>px;">
+        <?php echo $popupImageHtml; ?>
+        <p class="caption"><?php echo $caption; ?></p>
+    </div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    new LookbookPopupImage('<?php echo $htmlId; ?>', '<?php echo $htmlId; ?>_popup');
+//]]>
+</script>
