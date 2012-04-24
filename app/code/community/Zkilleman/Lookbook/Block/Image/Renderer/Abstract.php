@@ -67,7 +67,7 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Abstract
      */
     public function getImageHtml($nocache = false)
     {
-        if ($this->_imageHtml === null || $nocache) {
+        if ($this->_imageHtml === null || $nocache || $this->getNoImageHtmlCache()) {
             $this->_beforeGetImageHtml();
             $image = $this->getImage();
             $this->_imageHtml = $image ? 
@@ -77,6 +77,11 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Abstract
                             $this->_imageAttributes,
                             $this->_imageStyleAttributes,
                             $this->_imageBounds) : '';
+        }
+        if ($this->getNoImageHtmlCache()) {
+            $html = $this->_imageHtml;
+            $this->_imageHtml = null;
+            return $html;
         }
         return $this->_imageHtml;
     }

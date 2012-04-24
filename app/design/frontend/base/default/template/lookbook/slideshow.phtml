@@ -51,10 +51,12 @@
             $isFake = $i < $numFakes || $i > (count($items) - $numFakes) - 1;
             $itemHtml;
             if ($isFake) {
-                $itemName = $item->getNameInLayout();
-                $item->setNameInLayout($itemName . '_fake');
+                $itemName = $item->getHtmlId();
+                $item->setHtmlId($itemName . '_fake');
+                $item->setNoImageHtmlCache(true);
                 $itemHtml = $item->toHtml();
-                $item->setNameInLayout($itemName);
+                $item->setNoImageHtmlCache(false);
+                $item->setHtmlId($itemName);
             } else {
                 $itemHtml = $item->toHtml();
             }
