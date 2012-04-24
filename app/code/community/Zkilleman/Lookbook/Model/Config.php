@@ -35,6 +35,8 @@ class Zkilleman_Lookbook_Model_Config
     const XML_PATH_TAGS_PARAM_NAME  = 'cms/lookbook/tags_param_name';
     const XML_PATH_MAX_PARAM_TAGS   = 'cms/lookbook/max_param_tags';
     
+    const IMAGE_RENDERER_OPTION_PREFIX = '_image_renderer_';
+    
     /**
      *
      * @var array

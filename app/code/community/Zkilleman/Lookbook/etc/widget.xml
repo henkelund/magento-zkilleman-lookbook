@@ -54,6 +54,9 @@
                 <type>select</type>
                 <value>default</value>
                 <source_model>lookbook/config_source_imagerenderers</source_model>
+                <helper_block>
+                    <type>lookbook/adminhtml_widget_image_renderer</type>
+                </helper_block>
             </image_renderer>
             <width translate="label description">
                 <required>0</required>
@@ -123,6 +126,9 @@
                 <type>select</type>
                 <value>default</value>
                 <source_model>lookbook/config_source_imagerenderers</source_model>
+                <helper_block>
+                    <type>lookbook/adminhtml_widget_image_renderer</type>
+                </helper_block>
             </image_renderer>
             <portrait_width translate="label description">
                 <required>0</required>
