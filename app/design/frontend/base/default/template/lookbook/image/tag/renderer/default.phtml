@@ -27,24 +27,19 @@
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
 ?>
-<div class="slideshow-wrapper">
-    <ul id="<?php echo $this->getHtmlId(); ?>" class="slideshow"><!--
-    <?php foreach ($this->getItems() as $item): ?>
-     --><li class="item<?php if ($item->getIsFake()): ?> fake<?php endif; ?>">
-            <?php echo $item->toHtml(); ?>
-        </li><!--
-    <?php endforeach; ?>
- --></ul>
-    <button class="previous" title="<?php echo $this->__('Previous'); ?>">&laquo;</button>
-    <button class="next" title="<?php echo $this->__('Next'); ?>">&raquo;</button>
+<?php $helper = Mage::helper('lookbook'); ?>
+<?php foreach ($this->getTags() as $tag): ?>
+<div id="<?php echo $this->getTagHtmlId($tag); ?>"
+     class="positioned-tag renderer-default type-<?php echo $tag->getType(); ?>">
+    <a href="<?php echo $helper->getTagUrl($tag); ?>"><?php echo $tag->getName(); ?></a>
 </div>
 <script type="text/javascript">
-    
-    new LookbookSlideshow(
-            '<?php echo $this->getHtmlId(); ?>',
-            {
-                direction: '<?php echo $this->getDirection(); ?>',
-                interval:  <?php echo $this->getInterval(); ?>
-            });
-    
+//<![CDATA[
+    new LookbookImageTag(
+            '<?php echo $this->getTagHtmlId($tag); ?>',
+            '<?php echo $this->getImageHtmlId(); ?>',
+            <?php echo $tag->getRelX(); ?>,
+            <?php echo $tag->getRelY(); ?>);
+//]]>
 </script>
+<?php endforeach; ?>

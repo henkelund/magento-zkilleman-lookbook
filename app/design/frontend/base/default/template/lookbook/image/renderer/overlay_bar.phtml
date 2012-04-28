@@ -52,7 +52,7 @@
         <span class="title"><?php echo $this->getTitle(); ?></span>
         <p class="caption"><?php echo $this->getCaption(); ?></p>
     </div>
-    <?php foreach ($this->getPositionedTags() as $tag): ?>
+    <?php foreach ($this->getVisibleTags() as $tag): ?>
     <div class="positioned-tag <?php echo $tag->getType(); ?>"
             data-id="<?php echo $tag->getId(); ?>"
             data-type="<?php echo $tag->getType(); ?>"

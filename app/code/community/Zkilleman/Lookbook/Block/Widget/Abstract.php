@@ -83,6 +83,13 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     protected $_defaultImageRenderer = 'default';
     
     /**
+     * The default template for rendering tags
+     *
+     * @var string 
+     */
+    protected $_defaultTagsRenderer = 'lookbook/image_tag_renderer_default';
+    
+    /**
      * Counter used to produce unique identifiers for each widget instance
      *
      * @var int 
@@ -196,17 +203,27 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                         $this->_defaultImageRenderer;
         $rendererInfo = Mage::getSingleton('lookbook/config')
                                         ->getImageRenderer($renderer);
+        $rendererOptions = $this->_getDataByPrefix(
+                    Zkilleman_Lookbook_Model_Config::IMAGE_RENDERER_OPTION_PREFIX);
         
         foreach ($imageCollection as $image) {
-            $blocks[] = Mage::app()->getLayout()->createBlock(
+            $htmlId = $this->getHtmlId() . '_image_' . $image->getId();
+            $block = Mage::app()->getLayout()->createBlock(
                             $rendererInfo['block'],
-                            $this->getHtmlId() . '_image_' . $image->getId(),
-                            array(
-                                'image'    => $image,
-                                'width'    => $this->_getImageBlockWidth($image),
-                                'height'   => $this->_getImageBlockHeight($image),
-                                'tags'     => $this->getImageTags($image)
+                            $htmlId,
+                            array_merge(
+                                $rendererOptions, 
+                                array(
+                                    'image'  => $image,
+                                    'width'  => $this->_getImageBlockWidth($image),
+                                    'height' => $this->_getImageBlockHeight($image),
+                                    'tags'   => $this->getImageTags($image))
                             ));
+            $tagsBlock = Mage::app()->getLayout()->createBlock(
+                            $this->_defaultTagsRenderer,
+                            $htmlId . '_tags');
+            $block->append($tagsBlock, 'tags');
+            $blocks[] = $block;
         }
         return $blocks;
     }
@@ -305,6 +322,24 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
     protected function _getImageBlockHeight(Zkilleman_Lookbook_Model_Image $image)
     {
         return $this->getHeight();
+    }
+    
+    /**
+     * Get data with a certain key prefix
+     *
+     * @param  string $prefix
+     * @param  bool   $stripPrefix
+     * @return array 
+     */
+    protected function _getDataByPrefix($prefix, $stripPrefix = true)
+    {
+        $data = array();
+        foreach ($this->getData() as $key => $value) {
+            if (strpos($key, $prefix) === 0) {
+                $data[$stripPrefix ? substr($key, strlen($prefix)) : $key] = $value;
+            }
+        }
+        return $data;
     }
     
     /**

@@ -52,6 +52,15 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Popup
      *
      * @return string 
      */
+    public function getTagsImageHtmlId()
+    {
+        return $this->getPopupHtmlId() . '_image';
+    }
+    
+    /**
+     *
+     * @return string 
+     */
     public function getPopupHtmlId()
     {
         return $this->getHtmlId() . '_popup';
@@ -70,7 +79,8 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Popup
 
         return $image->getHtml(
                     $this->getPopupWidth(false),
-                    $this->getPopupHeight(false));
+                    $this->getPopupHeight(false),
+                    array('id' => $this->getTagsImageHtmlId()));
     }
     
     /**
@@ -126,14 +136,23 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Popup
     }
     
     /**
-     * TODO: Don't hard code zoom value.
-     * To fix it we need a way to admin properties for image renderers.
+     * Get Zoom ratio
      * 
      * @return float 
      */
     public function getZoom()
     {
-        return 1.5;
+        return max(1.0, (float) $this->getData('zoom'));
+    }
+    
+    /**
+     * Popup delay in milliseconds
+     *
+     * @return int 
+     */
+    public function getDelay()
+    {
+        return $this->hasData('delay') ? max(0, (int) $this->getData('delay')) : 100;
     }
 }
             

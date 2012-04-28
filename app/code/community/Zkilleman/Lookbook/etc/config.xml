@@ -161,6 +161,25 @@
                     <popup>
                         <title>Pop Up</title>
                         <block>lookbook/image_renderer_popup</block>
+                        <parameters>
+                            <zoom translate="label description">
+                                <required>0</required>
+                                <visible>1</visible>
+                                <label>Zoom</label>
+                                <type>text</type>
+                                <value>1.5</value>
+                                <description><![CDATA[Image zoom ratio.
+                                    A decimal value greater than or equal to 1.]]></description>
+                            </zoom>
+                            <delay translate="label description">
+                                <required>0</required>
+                                <visible>1</visible>
+                                <label>Delay</label>
+                                <type>text</type>
+                                <value>100</value>
+                                <description><![CDATA[Popup delay in milliseconds.]]></description>
+                            </delay>
+                        </parameters>
                     </popup>
                 </renderer>
             </image>

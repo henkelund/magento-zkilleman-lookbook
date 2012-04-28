@@ -99,6 +99,24 @@
                 <type>text</type>
                 <description><![CDATA[Slide interval in seconds. Defaults to 5.]]></description>
             </interval>
+            <num_fakes translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Fake Images</label>
+                <type>text</type>
+                <value>2</value>
+                <description><![CDATA[The number of fake images to be padded to each
+                    side of the image list. Used to make the slide loop seamlessly.
+                    Should be set to the number of visible images dived by two (rounded up).]]></description>
+            </num_fakes>
+            <page_size translate="label description">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Limit</label>
+                <type>text</type>
+                <description><![CDATA[The maximum number of images to load.
+                    Leave empty for no limit.]]></description>
+            </page_size>
         </parameters>
     </lookbook_slideshow>
     <lookbook_masonry type="lookbook/masonry" translate="name description" module="lookbook">

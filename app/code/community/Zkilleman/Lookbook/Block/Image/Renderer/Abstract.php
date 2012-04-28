@@ -118,7 +118,7 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Abstract
      *
      * @return array 
      */
-    public function getPositionedTags()
+    public function getVisibleTags()
     {
         $positionedTags = array();
         $bounds = $this->getBounds();
@@ -130,6 +130,15 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Abstract
             }
         }
         return $positionedTags;
+    }
+    
+    /**
+     *
+     * @return string 
+     */
+    public function getTagsImageHtmlId()
+    {
+        return $this->getHtmlId();
     }
     
     /**

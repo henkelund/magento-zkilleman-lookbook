@@ -28,12 +28,13 @@
  */
 ?>
 <?php echo $this->getImageHtml(); ?>
-<div id="<?php echo $this->getPopupHtmlId(); ?>"
-     class="lookbook-popup block"
-     style="display: none;">
+<div id="<?php echo $this->getPopupHtmlId(); ?>" style="left: -9999px;"
+     class="lookbook-popup block">
     <div class="block-title"><strong><?php echo $this->getTitle(); ?></strong></div>
-    <div class="block-content" style="width: <?php echo $this->getPopupWidth(true); ?>px;">
+    <div class="block-content"
+         style="width: <?php echo $this->getPopupWidth(true); ?>px;">
         <?php echo $this->getPopupImageHtml(); ?>
+        <?php echo $this->getChildHtml('tags'); ?>
         <p class="caption"><?php echo $this->getCaption(); ?></p>
     </div>
 </div>
@@ -41,6 +42,7 @@
 //<![CDATA[
     new LookbookPopupImage(
             '<?php echo $this->getHtmlId(); ?>',
-            '<?php echo $this->getPopupHtmlId(); ?>');
+            '<?php echo $this->getPopupHtmlId(); ?>',
+            {delay: <?php echo $this->getDelay(); ?>});
 //]]>
 </script>

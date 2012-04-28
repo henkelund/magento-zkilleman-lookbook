@@ -26,25 +26,42 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU GPL
  * @link https://github.com/henkelund/magento-zkilleman-lookbook
  */
-?>
-<div class="slideshow-wrapper">
-    <ul id="<?php echo $this->getHtmlId(); ?>" class="slideshow"><!--
-    <?php foreach ($this->getItems() as $item): ?>
-     --><li class="item<?php if ($item->getIsFake()): ?> fake<?php endif; ?>">
-            <?php echo $item->toHtml(); ?>
-        </li><!--
-    <?php endforeach; ?>
- --></ul>
-    <button class="previous" title="<?php echo $this->__('Previous'); ?>">&laquo;</button>
-    <button class="next" title="<?php echo $this->__('Next'); ?>">&raquo;</button>
-</div>
-<script type="text/javascript">
+
+class Zkilleman_Lookbook_Block_Image_Tag_Renderer_Default
+            extends Mage_Core_Block_Template
+{
     
-    new LookbookSlideshow(
-            '<?php echo $this->getHtmlId(); ?>',
-            {
-                direction: '<?php echo $this->getDirection(); ?>',
-                interval:  <?php echo $this->getInterval(); ?>
-            });
+    /**
+     *
+     * @var string
+     */
+    protected $_template = 'lookbook/image/tag/renderer/default.phtml';
     
-</script>
+    /**
+     *
+     * @param  Zkilleman_Lookbook_Model_Image_Tag $tag
+     * @return string 
+     */
+    public function getTagHtmlId($tag)
+    {
+        return $this->getImageHtmlId() . '_tag_' . $tag->getId();
+    }
+    
+    /**
+     *
+     * @return string 
+     */
+    public function getImageHtmlId()
+    {
+        return $this->getParentBlock()->getTagsImageHtmlId();
+    }
+    
+    /**
+     *
+     * @return array 
+     */
+    public function getTags()
+    {
+        return $this->getParentBlock()->getVisibleTags();
+    }
+}

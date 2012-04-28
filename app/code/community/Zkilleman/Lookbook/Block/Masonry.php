@@ -146,9 +146,16 @@ class Zkilleman_Lookbook_Block_Masonry
             'image_area',
             'page_size'
         );
+        
         $params = array_intersect_key(
                             $this->getData(),
                             array_combine($params, $params));
-        return Mage::helper('core')->jsonEncode($params);
+        
+        $imageRendererOptions = $this->_getDataByPrefix(
+                    Zkilleman_Lookbook_Model_Config::IMAGE_RENDERER_OPTION_PREFIX,
+                    false);
+        
+        return Mage::helper('core')->jsonEncode(
+                                        array_merge($imageRendererOptions, $params));
     }
 }

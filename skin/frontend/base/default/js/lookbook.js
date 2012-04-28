@@ -48,7 +48,7 @@ LookbookSlideshow.prototype = {
     _elem:     null,
     _items:    null,
     _numFakes: null,
-    _current:  -1,
+    _current:  null,
     _interval: null,
     _options:  null,
     initialize: function(id, options)
@@ -61,6 +61,7 @@ LookbookSlideshow.prototype = {
             return;
         }
         this._numFakes = this._elem.select('.item.fake').length;
+        this._current  = this._numFakes/2 - 1;
         this._initOptions(options);
         this._initEvents();
         this.slide('right', 0);
@@ -153,6 +154,38 @@ LookbookSlideshow.prototype = {
         }
     }
 };
+
+var LookbookImageTag = Class.create();
+LookbookImageTag.prototype = {
+    _tagElem: null,
+    _imgElem: null,
+    _x: null,
+    _y: null,
+    initialize: function(tag, image, x, y)
+    {
+        this._tagElem = $(tag);
+        this._imgElem = $(image);
+        this._x = parseFloat(x);
+        this._y = parseFloat(y);
+        this.updatePosition();
+    },
+    updatePosition: function()
+    {
+        var imgBounds = this._imgElem.bounds();
+        var tagBounds = this._tagElem.bounds();
+        var imgWidth  = imgBounds.width || this._imgElem.getAttribute('width');
+        var imgHeight = imgBounds.height || this._imgElem.getAttribute('height');
+        var x = parseInt(
+                    imgBounds.rLeft + this._x*imgWidth - tagBounds.width/2);
+        var y = parseInt(
+                    imgBounds.rTop + this._y*imgHeight - tagBounds.height/2);
+        this._tagElem.setStyle({
+            position : 'absolute',
+            left     : x + 'px',
+            top      : y + 'px'
+        });
+    }
+}
 
 var LookbookOverlayBarImage = Class.create();
 LookbookOverlayBarImage.prototype = {
@@ -340,8 +373,8 @@ LookbookMasonry.prototype = {
     {
         this._options = {
             effectDuration : 0.5,
-            beforeLayout   : function(masonry, brick) { return brick; },
-            afterLayout    : function(masonry, brick) { return brick; }
+            beforeLayout   : function(masonry, brick) {return brick;},
+            afterLayout    : function(masonry, brick) {return brick;}
         };
         if (typeof options == 'object') {
             for (var key in options) {
