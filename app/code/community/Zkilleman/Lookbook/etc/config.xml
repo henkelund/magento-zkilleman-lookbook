@@ -148,6 +148,12 @@
                             <admin_renderer>lookbook/adminhtml_image_tag_type_cmsblock</admin_renderer>
                         </cmsblock-->
                     </types>
+                    <renderer>
+                        <default>
+                            <title>Default</title>
+                            <block>lookbook/image_tag_renderer_default</block>
+                        </default>
+                    </renderer>
                 </tag>
                 <renderer>
                     <default>

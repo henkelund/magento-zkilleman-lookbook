@@ -58,6 +58,17 @@
                     <type>lookbook/adminhtml_widget_image_renderer</type>
                 </helper_block>
             </image_renderer>
+            <tag_renderer translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Tags Display Mode</label>
+                <type>select</type>
+                <value>default</value>
+                <source_model>lookbook/config_source_tagrenderers</source_model>
+                <helper_block>
+                    <type>lookbook/adminhtml_widget_image_tag_renderer</type>
+                </helper_block>
+            </tag_renderer>
             <width translate="label description">
                 <required>0</required>
                 <visible>1</visible>
@@ -148,6 +159,17 @@
                     <type>lookbook/adminhtml_widget_image_renderer</type>
                 </helper_block>
             </image_renderer>
+            <tag_renderer translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Tags Display Mode</label>
+                <type>select</type>
+                <value>default</value>
+                <source_model>lookbook/config_source_tagrenderers</source_model>
+                <helper_block>
+                    <type>lookbook/adminhtml_widget_image_tag_renderer</type>
+                </helper_block>
+            </tag_renderer>
             <portrait_width translate="label description">
                 <required>0</required>
                 <visible>1</visible>

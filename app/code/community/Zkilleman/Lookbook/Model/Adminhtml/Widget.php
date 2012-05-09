@@ -75,6 +75,50 @@ class Zkilleman_Lookbook_Model_Adminhtml_Widget
     
     /**
      *
+     * @param  string $type
+     * @param  string $htmlId
+     * @param  array  $values
+     * @return Varien_Data_Form_Element_Fieldset|false 
+     */
+    public function getTagRendererFieldset($type, $htmlId = '', $values = array())
+    {
+        $typeInfo = Mage::getSingleton('lookbook/config')->getTagRenderer($type);
+        if (!is_array($typeInfo) ||
+                !isset($typeInfo['parameters']) ||
+                !is_array($typeInfo['parameters'])) {
+            return false;
+        }
+        
+        $helper = Mage::helper($typeInfo['module']);
+
+        $form = new Varien_Data_Form();
+        $fieldset = $form->addFieldset($htmlId, array(
+            'legend' => sprintf(
+                            $helper->__('Tag Renderer \'%s\' Options'),
+                            $typeInfo['title']),
+            'class'  => 'tag-renderer-fieldset'
+        ));
+        
+        $parameters = $typeInfo['parameters'];
+        $prefix = Zkilleman_Lookbook_Model_Config::TAG_RENDERER_OPTION_PREFIX;
+        foreach ($parameters as $key => $parameter) {
+            if (is_array($parameter)) {
+                $parameter['key'] = $prefix . $key;
+                $field = $this->_addField(
+                        $fieldset,
+                        new Varien_Object($parameter),
+                        $helper);
+                if (isset($values[$parameter['key']])) {
+                    $field->setValue($values[$parameter['key']]);
+                }
+            }
+        }
+        
+        return $fieldset;
+    }
+    
+    /**
+     *
      * @param  Varien_Data_Form_Element_Fieldset $fieldset
      * @param  Varien_Object                     $parameter
      * @param  Mage_Core_Helper_Abstract         $helper

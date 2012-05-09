@@ -87,7 +87,7 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
      *
      * @var string 
      */
-    protected $_defaultTagsRenderer = 'lookbook/image_tag_renderer_default';
+    protected $_defaultTagsRenderer = 'default';
     
     /**
      * Counter used to produce unique identifiers for each widget instance
@@ -206,6 +206,16 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
         $rendererOptions = $this->_getDataByPrefix(
                     Zkilleman_Lookbook_Model_Config::IMAGE_RENDERER_OPTION_PREFIX);
         
+        $tagsRenderer = $this->hasData('tag_renderer') ?
+                            $this->getData('tag_renderer') :
+                            $this->_defaultTagsRenderer;
+        
+        $tagsRendererInfo = Mage::getSingleton('lookbook/config')
+                                        ->getTagRenderer($tagsRenderer);
+        
+        $tagsRendererOptions = $this->_getDataByPrefix(
+                    Zkilleman_Lookbook_Model_Config::TAG_RENDERER_OPTION_PREFIX);
+        
         foreach ($imageCollection as $image) {
             $htmlId = $this->getHtmlId() . '_image_' . $image->getId();
             $block = Mage::app()->getLayout()->createBlock(
@@ -220,8 +230,9 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                                     'tags'   => $this->getImageTags($image))
                             ));
             $tagsBlock = Mage::app()->getLayout()->createBlock(
-                            $this->_defaultTagsRenderer,
-                            $htmlId . '_tags');
+                            $tagsRendererInfo['block'],
+                            $htmlId . '_tags',
+                            $tagsRendererOptions);
             $block->append($tagsBlock, 'tags');
             $blocks[] = $block;
         }

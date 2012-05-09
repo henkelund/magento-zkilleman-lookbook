@@ -141,6 +141,7 @@ class Zkilleman_Lookbook_Block_Masonry
             'set_handle',
             'tags',
             'image_renderer',
+            'tag_renderer',
             'portrait_width',
             'landscape_width',
             'image_area',
@@ -155,7 +156,14 @@ class Zkilleman_Lookbook_Block_Masonry
                     Zkilleman_Lookbook_Model_Config::IMAGE_RENDERER_OPTION_PREFIX,
                     false);
         
+        $tagRendererOptions = $this->_getDataByPrefix(
+                    Zkilleman_Lookbook_Model_Config::TAG_RENDERER_OPTION_PREFIX,
+                    false);
+        
         return Mage::helper('core')->jsonEncode(
-                                        array_merge($imageRendererOptions, $params));
+                                        array_merge(
+                                                $imageRendererOptions,
+                                                $tagRendererOptions,
+                                                $params));
     }
 }
