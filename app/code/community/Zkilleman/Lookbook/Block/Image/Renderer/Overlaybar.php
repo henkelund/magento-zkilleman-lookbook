@@ -35,4 +35,13 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Overlaybar
      * @var string
      */
     protected $_template = 'lookbook/image/renderer/overlay_bar.phtml';
+    
+    /**
+     *
+     * @return string 
+     */
+    public function getTagsImageHtmlId()
+    {
+        return $this->getHtmlId() . '_img';
+    }
 }

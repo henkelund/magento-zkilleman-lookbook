@@ -216,15 +216,7 @@ LookbookOverlayBarImage.prototype = {
     },
     _initTags: function()
     {
-        var imgBounds = this._img.bounds();
-        this._elem.select('.positioned-tag').each(function(tag) {
-            var y = parseFloat(tag.getAttribute('data-y'))*imgBounds.height;
-            var x = parseFloat(tag.getAttribute('data-x'))*imgBounds.width;
-            var bounds = tag.bounds();
-            y -= bounds.height/2;
-            x -= bounds.width/2;
-            tag.style.top  = parseInt(y) + 'px';
-            tag.style.left = parseInt(x) + 'px';
+        this._elem.select('.image-wrapper :not(img)').each(function(tag) {
             tag.hide();
         });
     },
@@ -237,7 +229,7 @@ LookbookOverlayBarImage.prototype = {
         var duration = parseFloat(this._options.effectDuration);
         this._img.observe('mouseenter', function() {
             Effect.Queues.get(tagsEffectScope).invoke('cancel');
-            elem.select('.positioned-tag').each(function(tag) {
+            elem.select('.image-wrapper :not(img)').each(function(tag) {
                 new Effect.Appear(tag, {
                     queue: {scope: tagsEffectScope},
                     duration: duration
@@ -252,7 +244,7 @@ LookbookOverlayBarImage.prototype = {
         });
         elem.observe('mouseleave', function() {
             Effect.Queues.get(tagsEffectScope).invoke('cancel');
-            elem.select('.positioned-tag').each(function(tag) {
+            elem.select('.image-wrapper :not(img)').each(function(tag) {
                 new Effect.Fade(tag, {
                     queue: {scope: tagsEffectScope},
                     duration: duration

@@ -33,7 +33,10 @@
     $imageHtml = $this->getImageHtml();
 ?>
 <div id="<?php echo $this->getHtmlId(); ?>" class="overlay-bar-image">
-    <?php echo $imageHtml; ?>
+    <div id="<?php echo $this->getHtmlId(); ?>_img" class="image-wrapper">
+        <?php echo $imageHtml; ?>
+        <?php echo $this->getChildHtml('tags'); ?>
+    </div>
     <div class="bar">
         <?php if ($this->hasTags()): ?>
         <div class="tags">
@@ -52,19 +55,6 @@
         <span class="title"><?php echo $this->getTitle(); ?></span>
         <p class="caption"><?php echo $this->getCaption(); ?></p>
     </div>
-    <?php foreach ($this->getVisibleTags() as $tag): ?>
-    <div class="positioned-tag <?php echo $tag->getType(); ?>"
-            data-id="<?php echo $tag->getId(); ?>"
-            data-type="<?php echo $tag->getType(); ?>"
-            data-x="<?php echo $tag->getRelX(); ?>"
-            data-y="<?php echo $tag->getRelY(); ?>">
-        <?php if ($canFilter): ?>
-        <a href="<?php echo $helper->getTagUrl($tag); ?>"><?php echo $tag->getName(); ?></a>
-        <?php else: ?>
-        <?php echo $tag->getName(); ?>
-        <?php endif; ?>
-    </div>
-    <?php endforeach; ?>
 </div>
 <script type="text/javascript">
 //<![CDATA
