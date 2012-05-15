@@ -49,6 +49,6 @@ class Zkilleman_Lookbook_Block_Image_Renderer_Default
      */
     protected function _toHtml()
     {
-        return $this->getImageHtml();
+        return $this->getImageHtml() . $this->getChildHtml('tags');
     }
 }

@@ -74,11 +74,15 @@ class Zkilleman_Lookbook_Block_Slideshow
                 $first->setIsFake(true)
                             ->setHtmlId($first->getHtmlId() . '_after_' . $i)
                             ->setNoImageHtmlCache(true);
-                $first->setChild('tags', clone $first->getChild('tags'));
+                if ($first->getChild('tags')) {
+                    $first->setChild('tags', clone $first->getChild('tags'));
+                }
                 $last->setIsFake(true)
                             ->setHtmlId($last->getHtmlId() . '_before_' . $i)
                             ->setNoImageHtmlCache(true);
-                $last->setChild('tags', clone $last->getChild('tags'));
+                if ($last->getChild('tags')) {
+                    $last->setChild('tags', clone $last->getChild('tags'));
+                }
                 array_unshift($items, $last);
                 array_push($items, $first);
             }

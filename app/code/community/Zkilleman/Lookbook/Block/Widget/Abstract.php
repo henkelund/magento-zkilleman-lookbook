@@ -229,11 +229,13 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                                     'height' => $this->_getImageBlockHeight($image),
                                     'tags'   => $this->getImageTags($image))
                             ));
-            $tagsBlock = Mage::app()->getLayout()->createBlock(
-                            $tagsRendererInfo['block'],
-                            $htmlId . '_tags',
-                            $tagsRendererOptions);
-            $block->append($tagsBlock, 'tags');
+            if ($tagsRendererInfo) {
+                $tagsBlock = Mage::app()->getLayout()->createBlock(
+                                $tagsRendererInfo['block'],
+                                $htmlId . '_tags',
+                                $tagsRendererOptions);
+                $block->append($tagsBlock, 'tags');
+            }
             $blocks[] = $block;
         }
         return $blocks;

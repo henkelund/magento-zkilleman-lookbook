@@ -35,7 +35,9 @@ class Zkilleman_Lookbook_Model_Config_Source_Tagrenderers
      */
     public function toOptionArray()
     {
-        $options = array();
+        $options = array(
+            'none' => Mage::helper('lookbook')->__('None')
+        );
         foreach (Mage::getSingleton('lookbook/config')
                         ->getTagRenderers() as $renderer){
             $options[$renderer['key']] = $renderer['title'];
