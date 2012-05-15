@@ -132,12 +132,25 @@ abstract class Zkilleman_Lookbook_Block_Widget_Abstract
                                     ->setOrder('created_at', 'desc');
             }
             if ($tags = $this->getTags()) {
-                $collection->join(
-                                array('t' => 'lookbook/image_tag'),
-                                'main_table.image_id = t.image_id',
-                                array())
-                        ->addFieldToFilter('t.name', array('in' => $tags))
-                        ->distinct(true);
+                if (Mage::getSingleton('lookbook/config')->isTagsAggregatorAny()) {
+                    $collection->join(
+                                    array('t' => 'lookbook/image_tag'),
+                                    'main_table.image_id = t.image_id',
+                                    array())
+                            ->addFieldToFilter('t.name', array('in' => $tags))
+                            ->distinct(true);
+                } else {
+                    $i = 1;
+                    foreach ($tags as $tag) {
+                        $t = 't' . $i++;
+                        $collection->join(
+                                    array($t => 'lookbook/image_tag'),
+                                    'main_table.image_id = ' . $t . '.image_id',
+                                    array())
+                                    ->addFieldToFilter($t . '.name', $tag);
+                    }
+                    $collection->distinct(true);
+                }
             }
             if ($this->hasData('page_size')) {
                 $collection->setPageSize(abs((int) $this->getData('page_size')));

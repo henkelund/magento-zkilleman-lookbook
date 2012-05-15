@@ -35,6 +35,7 @@ class Zkilleman_Lookbook_Model_Config
     const XML_PATH_ALLOW_PARAM_TAGS = 'cms/lookbook/allow_param_tags';
     const XML_PATH_TAGS_PARAM_NAME  = 'cms/lookbook/tags_param_name';
     const XML_PATH_MAX_PARAM_TAGS   = 'cms/lookbook/max_param_tags';
+    const XML_PATH_PARAM_TAGS_AGGR  = 'cms/lookbook/param_tags_aggregator';
     
     const IMAGE_RENDERER_OPTION_PREFIX = '_image_renderer_';
     const TAG_RENDERER_OPTION_PREFIX   = '_tag_renderer_';
@@ -209,5 +210,15 @@ class Zkilleman_Lookbook_Model_Config
     {
         $limit = (int) Mage::getStoreConfig(self::XML_PATH_MAX_PARAM_TAGS);
         return $limit > 0 ? $limit : false;
+    }
+    
+    /**
+     * Whether "Any" is used as tag search aggregator
+     *
+     * @return bool 
+     */
+    public function isTagsAggregatorAny()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_PARAM_TAGS_AGGR) == 'any';
     }
 }
